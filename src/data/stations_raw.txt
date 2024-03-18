@@ -121,7 +121,7 @@ Erbil;19.5
 Erzurum;5.1
 Fairbanks;-2.3
 Fianarantsoa;17.9
-Flores  Petén;26.4
+Flores Petén;26.4
 Frankfurt;10.6
 Fresno;17.9
 Fukuoka;17.0
