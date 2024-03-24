@@ -49,6 +49,15 @@ def create_table(conn):
     print(f'Table {TABLE} created')
 
 
+def create_index(conn):
+    """test_sqlite() is ~4x slower with an index"""
+    dml = f"""
+    CREATE INDEX station_idx ON {TABLE}({COL_1_NAME});
+    """
+    conn.execute(dml)
+    print(f'Index created on {TABLE}.{COL_1_NAME}')
+
+
 def load_db(conn):
     stdout = subprocess.run(
         [
@@ -73,6 +82,7 @@ def get_row_count(conn):
     cursor.execute(query)
     results = cursor.fetchall()
     return results[0][0]
+
 
 @timeit
 def test_sqlite(conn):
