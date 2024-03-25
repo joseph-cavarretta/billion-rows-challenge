@@ -2,16 +2,29 @@ import os
 import time
 import subprocess
 from pathlib import Path
-import sqlite3 as sql
+import duckdb as db
 
-DB_PATH = Path('../sqlite3/stations.db').resolve()
+DB_PATH = Path('../duckdb/stations.db').resolve()
 DATA = Path('../data/stations_test.txt').resolve()
 TABLE = 'stations'
 COL_1_NAME = 'station'
-COL_1_TYPE = 'TEXT'
+COL_1_TYPE = 'VARCHR'
 COL_2_NAME = 'reading'
-COL_2_TYPE = 'INTEGER'
+COL_2_TYPE = 'DECIMAL'
 
+"""
+CREATE TABLE stations FROM 
+SELECT * 
+FROM read_csv(
+    'flights.csv',
+    delim = '|',
+    header = true,
+    columns = {
+        'station': 'VARCHAR',
+        'reding': 'DECIMAL',
+    }
+);
+"""
 
 def timeit(func):
     def wrapper(*args, **kwargs):
@@ -98,12 +111,3 @@ def test_sqlite(conn):
 
 def cleanup():
     os.remove(DB_PATH)
-
-
-if __name__ == '__main__':
-    create_db()
-    conn = connect_db()
-    create_table(conn)
-    load_db(conn)
-    test_sqlite(conn)
-    cleanup()
