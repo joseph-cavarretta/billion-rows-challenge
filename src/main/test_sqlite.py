@@ -38,7 +38,6 @@ def connect_db():
 
 
 def create_table(conn):
-    # drop table first?
     ddl = f"""
         CREATE TABLE IF NOT EXISTS {TABLE} (
             {COL_1_NAME} {COL_1_TYPE}, 
@@ -97,6 +96,9 @@ def test_sqlite(conn):
     results = cursor.fetchall()
     print(*results, sep='\n')
 
+def cleanup():
+    os.remove(DB_PATH)
+
 
 if __name__ == '__main__':
     create_db()
@@ -104,3 +106,4 @@ if __name__ == '__main__':
     create_table(conn)
     load_db(conn)
     test_sqlite(conn)
+    cleanup()
