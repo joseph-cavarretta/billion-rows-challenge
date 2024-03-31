@@ -4,27 +4,16 @@ import subprocess
 from pathlib import Path
 import duckdb as db
 
-DB_PATH = Path('../duckdb/stations.db').resolve()
+DB_DIR = Path('../duckdb/').resolve()
+DB_PATH = Path('../duckdb/stations.duck_db').resolve()
 DATA = Path('../data/stations_test.txt').resolve()
 TABLE = 'stations'
-COL_1_NAME = 'station'
-COL_1_TYPE = 'VARCHR'
-COL_2_NAME = 'reading'
-COL_2_TYPE = 'DECIMAL'
+SCHEMA = {
+    'station': 'VARCHAR',
+    'reading': 'DOUBLE'
+}
+CONFIG = {'threads': 8}
 
-"""
-CREATE TABLE stations FROM 
-SELECT * 
-FROM read_csv(
-    'flights.csv',
-    delim = '|',
-    header = true,
-    columns = {
-        'station': 'VARCHAR',
-        'reding': 'DECIMAL',
-    }
-);
-"""
 
 def timeit(func):
     def wrapper(*args, **kwargs):
@@ -37,51 +26,34 @@ def timeit(func):
 
 
 def create_db():
-    # if db already exists, remove for testing only
+    # if db already exists, remove db file for testing only
     if os.path.isfile(DB_PATH):
         os.remove(DB_PATH)
-    # create new instance of db
-    with open(DB_PATH, 'w'): pass
-    print(f'DB created at {str(DB_PATH)}')
+    # if first time running, create db directory
+    if not os.path.isdir(DB_DIR):
+        os.makedirs(DB_DIR)
 
 
 def connect_db():
-    conn = sql.connect(DB_PATH)
+    conn = db.connect(str(DB_PATH), config=CONFIG)
     return conn
 
 
 def create_table(conn):
     ddl = f"""
-        CREATE TABLE IF NOT EXISTS {TABLE} (
-            {COL_1_NAME} {COL_1_TYPE}, 
-            {COL_2_NAME} {COL_2_TYPE}
-        )"""
-    
+        CREATE OR REPLACE TABLE stations AS
+            SELECT * 
+            FROM read_csv(
+                '{DATA}',
+                parallel=True,
+                delim=';',
+                header=false,
+                names={list(SCHEMA.keys())},
+                columns={SCHEMA}
+            )
+        """
     conn.execute(ddl)
     print(f'Table {TABLE} created')
-
-
-def create_index(conn):
-    """test_sqlite() is ~4x slower with an index"""
-    dml = f"""
-    CREATE INDEX station_idx ON {TABLE}({COL_1_NAME});
-    """
-    conn.execute(dml)
-    print(f'Index created on {TABLE}.{COL_1_NAME}')
-
-
-def load_db(conn):
-    stdout = subprocess.run(
-        [
-            'sqlite3',
-            str(DB_PATH),
-            '-cmd',
-            '.mode csv',
-            '.separator ;',
-            '.import ' + str(DATA) + ' ' + TABLE
-        ],
-    capture_output=True
-    )
     row_count = get_row_count(conn)
     print(f'Table {TABLE} loaded with {row_count} rows')
 
@@ -90,14 +62,22 @@ def get_row_count(conn):
     query = f"""
         SELECT COUNT(1) FROM {TABLE}
     """
-    cursor = conn.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
+    conn.execute(query)
+    results = conn.fetchall()
     return results[0][0]
 
 
+# def create_index(conn):
+#     """test_sqlite() is ~4x slower with an index"""
+#     dml = f"""
+#     CREATE INDEX station_idx ON {TABLE}({COL_1_NAME});
+#     """
+#     conn.execute(dml)
+#     print(f'Index created on {TABLE}.{COL_1_NAME}')
+
+
 @timeit
-def test_sqlite(conn):
+def test_duckdb(conn):
     query = f"""
         SELECT station, ROUND(AVG(reading),2) , MIN(reading), MAX(reading)
         FROM {TABLE}
@@ -109,5 +89,13 @@ def test_sqlite(conn):
     results = cursor.fetchall()
     print(*results, sep='\n')
 
+
 def cleanup():
     os.remove(DB_PATH)
+
+if __name__ == '__main__':
+    create_db()
+    conn = connect_db()
+    create_table(conn)
+    test_duckdb(conn)
+    cleanup()
