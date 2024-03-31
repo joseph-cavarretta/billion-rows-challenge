@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 import duckdb as db
 
+
 DB_DIR = Path('../duckdb/').resolve()
 DB_PATH = Path('../duckdb/stations.duck_db').resolve()
 DATA = Path('../data/stations_test.txt').resolve()
@@ -76,6 +77,10 @@ def get_row_count(conn):
 #     print(f'Index created on {TABLE}.{COL_1_NAME}')
 
 
+def cleanup():
+    os.remove(DB_PATH)
+
+
 @timeit
 def test_duckdb(conn):
     query = f"""
@@ -89,9 +94,6 @@ def test_duckdb(conn):
     results = cursor.fetchall()
     print(*results, sep='\n')
 
-
-def cleanup():
-    os.remove(DB_PATH)
 
 if __name__ == '__main__':
     create_db()
