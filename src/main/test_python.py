@@ -39,11 +39,9 @@ def process_file_partition():
     pass
 
 
-@timeit
 def count_records():
-    # with open(DATA, 'rb') as f:
-    #     num_lines = sum(1 for _ in f)
-    num_lines = int(subprocess.check_output(f'wc -l {DATA}', shell=True).split()[0])
+    bash = f'wc -l {DATA}'
+    num_lines = int(subprocess.check_output(bash, shell=True).split()[0])
     return num_lines
 
 
@@ -52,7 +50,7 @@ def get_start_positions(num_lines):
     start_positions = [
         i * part_size for i in range(NUM_PARTITIONS)
     ]
-    print(start_positions)
+    return start_positions
 
 
 def test_python():
