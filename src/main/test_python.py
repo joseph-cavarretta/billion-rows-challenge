@@ -13,3 +13,54 @@
 #     item[3] += count
 # except KeyError: # first time entering it 
 #     station_measurements[station] = [min_, max_, sum_, count]
+
+import os
+import time
+import subprocess
+from pathlib import Path
+from multiprocessing import Pool
+
+DATA = Path('../data/stations_test.txt').resolve()
+NUM_PARTITIONS = 8
+CORES = 8
+
+
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        t1 = time.perf_counter()
+        res = func(*args, **kwargs)
+        t2 = time.perf_counter()
+        print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
+        return res
+    return wrapper
+
+
+def process_file_partition():
+    pass
+
+
+@timeit
+def count_records():
+    # with open(DATA, 'rb') as f:
+    #     num_lines = sum(1 for _ in f)
+    num_lines = int(subprocess.check_output(f'wc -l {DATA}', shell=True).split()[0])
+    return num_lines
+
+
+def get_start_positions(num_lines):
+    part_size = num_lines // NUM_PARTITIONS
+    start_positions = [
+        i * part_size for i in range(NUM_PARTITIONS)
+    ]
+    print(start_positions)
+
+
+def test_python():
+    pass
+
+
+if __name__ == '__main__':
+    # with open(DATA, "r") as f:
+    #     lines = f.read().split('\n')[:10]
+    num_lines = count_records()
+    get_start_positions(num_lines)

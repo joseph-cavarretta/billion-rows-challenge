@@ -1,6 +1,5 @@
 import os
 import time
-import subprocess
 from pathlib import Path
 import duckdb as db
 
@@ -13,7 +12,9 @@ SCHEMA = {
     'station': 'VARCHAR',
     'reading': 'DOUBLE'
 }
-CONFIG = {'threads': 8}
+CONFIG = {
+    'threads': 8
+}
 
 
 def timeit(func):
@@ -66,15 +67,6 @@ def get_row_count(conn):
     conn.execute(query)
     results = conn.fetchall()
     return results[0][0]
-
-
-# def create_index(conn):
-#     """test_sqlite() is ~4x slower with an index"""
-#     dml = f"""
-#     CREATE INDEX station_idx ON {TABLE}({COL_1_NAME});
-#     """
-#     conn.execute(dml)
-#     print(f'Index created on {TABLE}.{COL_1_NAME}')
 
 
 def cleanup():
