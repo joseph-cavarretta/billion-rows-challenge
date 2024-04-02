@@ -1,14 +1,14 @@
 import os
+import subprocess
 import time
 from pathlib import Path
 import pandas as pd
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-"""
-TODO:
-    ADD CHUNKING
 
-"""
-DATA = Path('../data/stations_test.txt').resolve()
+DATA = Path('../data/stations.txt').resolve()
+CHUNKS = 100
 
 def timeit(func):
     def wrapper(*args, **kwargs):
@@ -20,26 +20,57 @@ def timeit(func):
     return wrapper
 
 
+def count_records():
+    bash = f'wc -l {DATA}'
+    num_lines = int(subprocess.check_output(bash, shell=True).split()[0])
+    return num_lines
+
+
 @timeit
-def test_pandas(path):
+def test_pandas(path, lines):
+    chunksize = lines // CHUNKS
+    records = pd.DataFrame(columns = ['station', 'max', 'min', 'count', 'sum'])
+
     if not os.path.isfile(path):
         raise Exception(f'No input file present at {path}')
     
-    df = pd.read_csv(
+    for df in pd.read_csv(
         path, 
         sep=';', 
         header=None, 
         names=['station', 'reading'], 
-        dtype={'station': 'category'}
-    )
-
-    results = df.groupby('station', observed=True) \
-                .agg({'reading': ['mean', 'max', 'min']}) \
+        dtype={'station': 'category'},
+        chunksize=chunksize
+    ):
+        tmp = df.groupby('station', observed=True) \
+                .agg({'reading': ['max', 'min', 'count', 'sum']}) \
+                .droplevel(axis=1, level=0) \
                 .reset_index() \
-                .sort_values(by='station')
-    print(results)
+                .rename(
+                    {
+                        'max': '_max',
+                        'min': '_min',
+                        'count': '_count',
+                        'sum': '_sum'
+                    }
+                )
+        records = pd.concat([records, tmp])
+    
+    results = records.groupby('station', observed=True) \
+                .agg(
+                    _max=('max', 'max'),
+                    _min=('min', 'min'),
+                    _count=('count', 'sum'),
+                    _sum=('sum', 'sum')
+                    ) \
+                .reset_index()
+    
+    results['_mean'] = results['_sum'] / results['_count']
+
+    print(results[['station', '_max', '_min', '_mean']].sort_values(by='station'))
+
 
 
 if __name__ == '__main__':
-    data = str(DATA)
-    test_pandas(data)
+    lines = count_records()
+    test_pandas(DATA, lines)
