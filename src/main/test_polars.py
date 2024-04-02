@@ -29,9 +29,9 @@ def test_polars(path):
     )
     
     results = df.group_by('station').agg(
-            col_mean=pl.col('reading').mean().round(1), 
-            col_max=pl.col('reading').max().round(1), 
-            col_min=pl.col('reading').min().round(1)
+            col_mean=pl.col('reading').mean().round(3), 
+            col_max=pl.col('reading').max().round(3), 
+            col_min=pl.col('reading').min().round(3)
     ).sort('station').collect(streaming=True)
     # .explain(streaming=True, comm_subplan_elim=False)
     print(results)

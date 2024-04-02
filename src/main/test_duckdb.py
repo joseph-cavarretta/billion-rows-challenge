@@ -76,7 +76,7 @@ def cleanup():
 @timeit
 def test_duckdb(conn):
     query = f"""
-        SELECT station, ROUND(AVG(reading),2) , MIN(reading), MAX(reading)
+        SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)
         FROM {TABLE}
         GROUP BY station
         ORDER BY station

@@ -75,6 +75,7 @@ def test_python(slices):
     records = dict()
     
     for chunk in res:
+        print(chunk.items())
         for station, (min_, max_, sum_, count) in chunk.items():
             try:
                 record = records[station]
@@ -86,7 +87,7 @@ def test_python(slices):
                 records[station] = [min_, max_, sum_, count]
 
     return [
-        (station, min_, max_, sum_ / count) for
+        (station, min_, max_, round(sum_ / count, 3)) for
         (station, (min_, max_, sum_, count)) in list(sorted(records.items()))
     ]
 
