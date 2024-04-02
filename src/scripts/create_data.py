@@ -2,10 +2,15 @@ import os
 import random
 import numpy as np
 from timeit import timeit
+from pathlib import Path
+
+
+RAW_DATA = Path('../data/stations_raw.txt').resolve()
+OUT_FILE = Path('../data/stations_test.txt').resolve()
+RECORDS = 1000000
 
 
 class CreateData:
-
     def __init__(self, inpath: str, outpath: str, records: int):
         self.inpath = inpath
         self.outpath = outpath
@@ -44,19 +49,15 @@ class CreateData:
         """
         Creates a dataset of size n (self.records) and writes to file
         """
-        with open(outpath, 'w') as f:
+        with open(self.outpath, 'w') as f:
             for i in range(self.records):
                 station, temp = self.create_record()
-                f.write(f"{station}{self.sep}{temp:.3f}\n")
+                f.write(f"{station}{self.sep}{temp:.1f}\n")
         print(f'Test dataset created with {self.records:,} records')
         print(f'Test file size: {os.path.getsize(self.outpath)//1024**3} Gb')
 
 
 if __name__ == '__main__':
-
-    inpath = '../data/stations_raw.txt'
-    outpath = '../data/stations_test.txt'
-    records = 1000000
-    data = CreateData(inpath, outpath, records)
+    data = CreateData(RAW_DATA, OUT_FILE, RECORDS)
     data.load_infile()
     data.create_dataset()
