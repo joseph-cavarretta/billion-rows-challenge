@@ -3,6 +3,11 @@ import time
 from pathlib import Path
 import pandas as pd
 
+"""
+TODO:
+    ADD CHUNKING
+
+"""
 DATA = Path('../data/stations_test.txt').resolve()
 
 def timeit(func):
