@@ -4,7 +4,7 @@ from pathlib import Path
 from multiprocessing import Pool
 
 
-DATA = Path('../data/stations_test.txt').resolve()
+DATA = Path('src/data/stations_test.txt').resolve()
 NUM_PARTITIONS = 8
 CORES = 8
 
