@@ -4,9 +4,9 @@ from pathlib import Path
 import duckdb as db
 
 
-DB_DIR = Path('../duckdb/').resolve()
-DB_PATH = Path('../duckdb/stations.duck_db').resolve()
-DATA = Path('../data/stations.txt').resolve()
+DB_DIR = Path('src/duckdb/').resolve()
+DB_PATH = Path('src/duckdb/stations.duck_db').resolve()
+DATA = Path('src/data/stations_test.txt').resolve()
 TABLE = 'stations'
 SCHEMA = {
     'station': 'VARCHAR',

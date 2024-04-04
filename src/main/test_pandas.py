@@ -7,7 +7,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-DATA = Path('../data/stations.txt').resolve()
+DATA = Path('src/data/stations_test.txt').resolve()
 CHUNKS = 100
 
 

@@ -5,8 +5,8 @@ from timeit import timeit
 from pathlib import Path
 
 
-RAW_DATA = Path('../data/stations_raw.txt').resolve()
-OUT_FILE = Path('../data/stations.txt').resolve()
+RAW_DATA = Path('src/data/stations_raw.txt').resolve()
+OUT_FILE = Path('src/data/stations.txt').resolve()
 RECORDS = 1000000000
 
 

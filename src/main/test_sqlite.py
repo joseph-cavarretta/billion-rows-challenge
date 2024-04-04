@@ -7,7 +7,7 @@ import sqlite3 as sql
 # test_sqlite() runtime: 982.9557 seconds
 
 DB_PATH = Path('../sqlite3/stations.db').resolve()
-DATA = Path('../data/stations.txt').resolve()
+DATA = Path('../data/stations_test.txt').resolve()
 TABLE = 'stations'
 COL_1_NAME = 'station'
 COL_1_TYPE = 'TEXT'
