@@ -10,6 +10,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 DATA = Path('../data/stations.txt').resolve()
 CHUNKS = 100
 
+
 def timeit(func):
     def wrapper(*args, **kwargs):
         t1 = time.perf_counter()
@@ -68,7 +69,6 @@ def test_pandas(path, lines):
     results['_mean'] = results['_sum'] / results['_count']
 
     print(results[['station', '_max', '_min', '_mean']].sort_values(by='station'))
-
 
 
 if __name__ == '__main__':

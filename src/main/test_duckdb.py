@@ -6,7 +6,7 @@ import duckdb as db
 
 DB_DIR = Path('../duckdb/').resolve()
 DB_PATH = Path('../duckdb/stations.duck_db').resolve()
-DATA = Path('../data/stations_test.txt').resolve()
+DATA = Path('../data/stations.txt').resolve()
 TABLE = 'stations'
 SCHEMA = {
     'station': 'VARCHAR',
@@ -28,7 +28,6 @@ def timeit(func):
 
 
 def create_db():
-    # if db already exists, remove db file for testing only
     if os.path.isfile(DB_PATH):
         os.remove(DB_PATH)
     # if first time running, create db directory

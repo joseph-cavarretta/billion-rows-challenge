@@ -4,8 +4,10 @@ import subprocess
 from pathlib import Path
 import sqlite3 as sql
 
+# test_sqlite() runtime: 982.9557 seconds
+
 DB_PATH = Path('../sqlite3/stations.db').resolve()
-DATA = Path('../data/stations_test.txt').resolve()
+DATA = Path('../data/stations.txt').resolve()
 TABLE = 'stations'
 COL_1_NAME = 'station'
 COL_1_TYPE = 'TEXT'
@@ -24,7 +26,6 @@ def timeit(func):
 
 
 def create_db():
-    # if db already exists, remove for testing only
     if os.path.isfile(DB_PATH):
         os.remove(DB_PATH)
     # create new instance of db

@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 RAW_DATA = Path('../data/stations_raw.txt').resolve()
-OUT_FILE = Path('../data/stations_test.txt').resolve()
-RECORDS = 1000000
+OUT_FILE = Path('../data/stations.txt').resolve()
+RECORDS = 1000000000
 
 
 class CreateData:
