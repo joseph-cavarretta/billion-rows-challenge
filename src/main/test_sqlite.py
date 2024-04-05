@@ -5,8 +5,7 @@ from pathlib import Path
 import sqlite3 as sql
 
 # test_sqlite() runtime: 982.9557 seconds
-
-DB_PATH = Path('src/sqlite3/stations.db').resolve()
+DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
 DATA = Path('src/data/stations_test.txt').resolve()
 TABLE = 'stations'
 COL_1_NAME = 'station'
