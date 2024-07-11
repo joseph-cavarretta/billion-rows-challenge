@@ -5,7 +5,7 @@ Inspired by the idea of pushing a language to its performance limits, I wanted t
 
 The basic premise of this challenge is to take a csv file containing 1 billion weather readings for stations all around the world, and find the min, max, and mean reading for each station as fast as possible.
 
-### Languages / Tools Tested:
+## Languages / Tools Tested:
 - Python
     - Multi-threaded to run in parallel on 8-cores
 - Pandas
@@ -17,13 +17,13 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 - Sqlite
     - A local OLTP database native to Python. Sqlite isn't meant for high volume analytical workloads, but was included just for comparison
 
-### Test Details:
+## Test Details:
 - Tests were carried out on a 14GB csv file
 - Each test consisted of reading, aggregating, and returning formatted results
 - The test file contains data in the following format: `station_name;temperature_reading` (to one decimal point)
 - The program must find the min, max, and mean temperatures readings for each station and return the full results
 
-### Machine Details:
+## Machine Details:
 - Dell Inspiron 5579
 - 8x Intel Core i7-8550U Processors
 - 12GB Memory
@@ -36,10 +36,17 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 - Each script is written in its own file titled `test_{framework name}.py` and can be run individually under from `src/main`
 
 ## Results
-
-<p align="center">
-<img width='1400' alt='Dashboard' src='https://user-images.githubusercontent.com/57957983/226228269-63b9c991-44ad-478c-ac8a-7a7041cda3e7.png'>
+Python: 000 \
+Pandas: 351.4027s
+<p align="left">
+<img width='400' alt='Dashboard' src='https://github.com/joseph-cavarretta/photos/blob/main/test_pandas.png'>
 </p>
+Polars: 51.4326s
+<p align="left">
+<img width='400' alt='Dashboard' src='https://github.com/joseph-cavarretta/photos/blob/main/test_polars.png'>
+</p>
+DuckDB: 000
+Sqlite: 000
 
 ## Developed by:
 Joseph Cavarretta |
