@@ -6,34 +6,33 @@ Inspired by the idea of pushing a language to its performance limits, I wanted t
 The basic premise of this challenge is to take a csv file containing 1 billion weather readings for stations all around the world, and find the min, max, and mean reading for each station as fast as possible.
 
 ## Languages / Tools Tested:
-- Python
-    - Multi-threaded to run in parallel on 8-cores
-- Pandas
-    - Using chunking on a dataframe to process the file in batches
-- Polars
-    - Multi-threaded by default and allows for streaming processing on datasets larger than available memory
-- DuckDB
-    - An OLAP database that utilizes a columnar-vectorized query execution engine that suports larger-than-memory processing
-- Sqlite
-    - A local OLTP database native to Python. Sqlite isn't meant for high volume analytical workloads, but was included just for comparison
+**PYTHON** - Multi-threaded to run in parallel on 8-cores
+  
+**PANDAS** - Using chunking on a dataframe to process the file in batches
+
+**POLARS** - Multi-threaded by default and allows for streaming processing on datasets larger than available memory
+
+**DUCKDB** - An OLAP database that utilizes a columnar-vectorized query execution engine that suports larger-than-memory processing
+
+**SQLITE** - A local OLTP database native to Python. Sqlite isn't meant for high volume analytical workloads, but was included just for comparison
 
 ## Test Details:
-- Tests were carried out on a 14GB csv file
-- Each test consisted of reading, aggregating, and returning formatted results
-- The test file contains data in the following format: `station_name;temperature_reading` (to one decimal point)
-- The program must find the min, max, and mean temperatures readings for each station and return the full results
+:pencil2:&emsp; Tests were carried out on a 14GB csv file \
+:pencil2:&emsp; Each test consisted of reading, aggregating, and returning formatted results \
+:pencil2:&emsp; The test file contains data in the following format: `station_name;temperature_reading` (to one decimal point) \
+:pencil2:&emsp; The program must find the min, max, and mean temperatures readings for each station and return the full results
 
 ## Machine Details:
-- Dell Inspiron 5579
-- 8x Intel Core i7-8550U Processors
-- 12GB Memory
-- Ubuntu 22.10 64-bit
+:computer:&emsp; Dell Inspiron 5579 \
+:computer:&emsp; 8x Intel Core i7-8550U Processors \
+:computer:&emsp; 12GB Memory \
+:computer:&emsp; Ubuntu 22.10 64-bit
 
 ## To Run:
-- Setup your local python virtual environment and install `requirements.txt`
-- Create the data file by running `src/scripts/create_data.py`
-- This will construct the 1 billion row data file and save it as `src/data/stations.txt`
-- Each script is written in its own file titled `test_{framework name}.py` and can be run individually under from `src/main`
+:clock130:&emsp; Setup your local python virtual environment and install `requirements.txt` \
+:clock130:&emsp; Create the data file by running `src/scripts/create_data.py` \
+:clock130:&emsp; This will construct the 1 billion row data file and save it as `src/data/stations.txt` \
+:clock130:&emsp; Each script is written in its own file titled `test_{framework name}.py` and can be run individually under from `src/main`
 
 ## Results
 Python: 000 \
