@@ -48,7 +48,4 @@ DuckDB: 000
 Sqlite: 000
 
 ## Developed by:
-Joseph Cavarretta |
-joseph.m.cavarretta@gmail.com |
-[Github](https://github.com/joseph-cavarretta) |
-[LinkedIn](https://www.linkedin.com/in/joseph-cavarretta-87242871/))
+Joseph Cavarretta &ensp; | &ensp; joseph.m.cavarretta@gmail.com &ensp; | &ensp; [Github](https://github.com/joseph-cavarretta) &ensp; | &ensp; [LinkedIn](https://www.linkedin.com/in/joseph-cavarretta-87242871/)
