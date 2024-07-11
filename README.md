@@ -1,18 +1,18 @@
 ## Overview
 In January 2024, software engineer [Gunnar Morling](https://github.com/gunnarmorling) released a project called the [1 Billion Row Challenge](https://github.com/gunnarmorling/1brc), which was a call to developers to push the limits of Java and see how fast we could process and aggregate 1 billion rows of data.
 
-Inspired by the idea of pushing a language to its performance limits, I wanted to try some common data storage and processing tools used in the Data Engineering field to test my own skills.
+Inspired by the idea of pushing a language to its performance limits, I wanted to try some common data storage and processing tools used in the DE field to test my own skills.
 
 The basic premise of this challenge is to take a csv file containing 1 billion weather readings for stations all around the world, and find the min, max, and mean reading for each station as fast as possible.
 
 ## Languages / Tools Tested:
-**PYTHON** - Multi-threaded to run in parallel on 8-cores
+**PYTHON** - Multi-threaded on 8-cores
   
 **PANDAS** - Using chunking on a dataframe to process the file in batches
 
 **POLARS** - Multi-threaded by default and allows for streaming processing on datasets larger than available memory
 
-**DUCKDB** - An OLAP database that utilizes a columnar-vectorized query execution engine that suports larger-than-memory processing
+**DUCKDB** - An OLAP database that utilizes a columnar-vectorized query execution engine which supports larger-than-memory processing
 
 **SQLITE** - A local OLTP database native to Python. Sqlite isn't meant for high volume analytical workloads, but was included just for comparison
 
