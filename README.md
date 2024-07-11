@@ -20,7 +20,7 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 :pencil2:&emsp; Tests were carried out on a 14GB csv file \
 :pencil2:&emsp; Each test consisted of reading, aggregating, and returning formatted results \
 :pencil2:&emsp; The test file contains data in the following format: `station_name;temperature_reading` (to one decimal point) \
-:pencil2:&emsp; The program must find the min, max, and mean temperatures readings for each station and return the full results
+:pencil2:&emsp; The program must find the min, max, and mean temperature readings for each station and return sorted results
 
 ## Machine Details:
 :computer:&emsp; Dell Inspiron 5579 \
