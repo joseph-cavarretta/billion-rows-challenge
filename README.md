@@ -1,9 +1,11 @@
 ## Overview
-In January 2024, software engineer [Gunnar Morling](https://github.com/gunnarmorling) released a project called the [1 Billion Row Challenge](https://github.com/gunnarmorling/1brc), which was a call to developers to push the limits of Java and see how fast we could process and aggregate 1 billion rows of data.
+In January 2024, [Gunnar Morling](https://github.com/gunnarmorling) released a project called the [1 Billion Row Challenge](https://github.com/gunnarmorling/1brc), which was a call to developers to push the limits of Java and see how fast they could process and aggregate 1 billion rows of data.
 
-Inspired by the idea of pushing a language to its performance limits, I wanted to try some common data storage and processing tools used in the DE field to test my own skills.
+Inspired by the idea of pushing a language to its performance limits, I wanted to try some common data processing tools used in the DE field to test my own skills.
 
 The basic premise of this challenge is to take a csv file containing 1 billion weather readings for stations all around the world, and find the min, max, and mean reading for each station as fast as possible.
+
+The catch in my case is that the data file is larger than my RAM. So processing the full dataset in memory is not an option.
 
 ## Languages / Tools Tested:
 **PYTHON** - Multi-threaded on 8-cores
@@ -14,7 +16,7 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 
 **DUCKDB** - An OLAP database that utilizes a columnar-vectorized query execution engine which supports larger-than-memory processing
 
-**SQLITE** - A local OLTP database native to Python. Sqlite isn't meant for high volume analytical workloads, but was included just for comparison
+**SQLITE** - A local OLTP database native to Python
 
 ## Test Details:
 :pencil2:&emsp; Tests were carried out on a 14GB csv file \
@@ -30,9 +32,25 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 
 ## To Run:
 :clock130:&emsp; Setup your local python virtual environment and install `requirements.txt` \
-:clock130:&emsp; Create the data file by running `src/scripts/create_data.py` \
+:clock130:&emsp; Create the data file by running `make create_data` \
 :clock130:&emsp; This will construct the 1 billion row data file and save it as `src/data/stations.txt` \
-:clock130:&emsp; Each script is written in its own file titled `test_{framework name}.py` and can be run individually under from `src/main`
+:clock130:&emsp; Each script is written in its own file titled `test_{framework name}.py`
+:clock130:&emsp; Run each script individually using the makefile commands (`make python`, `make polars`, 'make sqlite`, etc)
+
+## Files:
+`test_python.py`:
+-
+`test_pandas.py`: 
+- 
+`test_polars.py`:
+-
+`test_duckdb.py`:
+-
+`test_sqlite.py`: 
+- Creates database `src/db/sqlite3/stations.db`
+- Creates table `stations` and loads data file
+- Runs aggregation query and returns results
+- Note: using an index on `stations.station` removed `--USE TEMP B-TREE FOR GROUP BY` from the query plan but did not improve query speed (it slowed it by 3-4x). The index also increased db size from 26GB to 44GB - so be weary of disk space.
 
 ## Results
 Python: 000 \

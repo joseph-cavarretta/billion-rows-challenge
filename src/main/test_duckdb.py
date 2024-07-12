@@ -6,7 +6,7 @@ import duckdb as db
 
 DB_DIR = Path('src/db/duckdb/').resolve()
 DB_PATH = Path('src/db/duckdb/stations.duck_db').resolve()
-DATA = Path('src/data/stations_test.txt').resolve()
+DATA = Path('src/data/stations.txt').resolve()
 TABLE = 'stations'
 SCHEMA = {
     'station': 'VARCHAR',

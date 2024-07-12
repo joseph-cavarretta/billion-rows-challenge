@@ -1,10 +1,9 @@
 import time
-import subprocess
 from pathlib import Path
 from multiprocessing import Pool
 
 
-DATA = Path('src/data/stations_test.txt').resolve()
+DATA = Path('src/data/stations_text.txt').resolve()
 NUM_PARTITIONS = 8
 CORES = 8
 
@@ -17,12 +16,6 @@ def timeit(func):
         print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
         return res
     return wrapper
-
-
-def count_records():
-    bash = f'wc -l {DATA}'
-    num_lines = int(subprocess.check_output(bash, shell=True).split()[0])
-    return num_lines
 
 
 def get_start_positions(num_lines):
@@ -44,9 +37,9 @@ def process_file_partition(start, end):
     records = dict()
 
     with open(DATA, "r") as f:
-        lines = f.read().split('\n')[start:end]
+        #lines = f.read().split('\n')[start:end]
 
-        for line in lines:
+        for line in f:
             vals = line.split(';')
             station = vals[0]
             measurement = float(vals[1])
@@ -75,7 +68,6 @@ def test_python(slices):
     records = dict()
     
     for chunk in res:
-        print(chunk.items())
         for station, (min_, max_, sum_, count) in chunk.items():
             try:
                 record = records[station]

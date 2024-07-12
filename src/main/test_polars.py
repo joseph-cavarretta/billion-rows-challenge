@@ -2,11 +2,12 @@ import os
 import time
 from pathlib import Path
 import polars as pl
+from timeit import timeit
 
 # tweak as needed
 pl.Config.set_streaming_chunk_size(8000000)
 
-DATA = Path('src/data/stations_test.txt').resolve()
+DATA = Path('src/data/stations.txt').resolve()
 
 
 def timeit(func):

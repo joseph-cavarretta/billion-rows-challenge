@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 import sqlite3 as sql
 
-# test_sqlite() runtime: 982.9557 seconds
+
 DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
 DATA = Path('src/data/stations_test.txt').resolve()
 TABLE = 'stations'
@@ -29,7 +29,7 @@ def create_db():
         os.remove(DB_PATH)
     # create new instance of db
     with open(DB_PATH, 'w'): pass
-    print(f'DB created at {str(DB_PATH)}')
+    print(f'DB created')
 
 
 def connect_db():
@@ -49,7 +49,6 @@ def create_table(conn):
 
 
 def create_index(conn):
-    """test_sqlite() is ~4x slower with an index"""
     dml = f"""
     CREATE INDEX station_idx ON {TABLE}({COL_1_NAME});
     """
@@ -92,8 +91,8 @@ def test_sqlite(conn):
         ORDER BY station
     """
     cursor = conn.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
+    rows = cursor.execute(query)
+    results = rows.fetchall()
     print(*results, sep='\n')
 
 def cleanup():
