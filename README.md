@@ -39,7 +39,7 @@ The catch in my case is that the data file is larger than my RAM. So processing 
 
 ## Files:
 **test_python.py**:
-- Reads file in chunks
+- TODO
 
 **test_pandas.py**: 
 - Gets count of lines in file via a bash subprocess
@@ -62,10 +62,6 @@ The catch in my case is that the data file is larger than my RAM. So processing 
 - Note: using an index on `stations.station` removed `--USE TEMP B-TREE FOR GROUP BY` from the query plan but did not improve query speed (it slowed it by 3-4x). The index also increased db size from 26GB to 44GB - so be weary of disk space.
 
 ## Results
-Python: 000
-<p align="left">
-<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/test_pandas.png'>
-</p>
 Pandas: 351.4027s
 <p align="left">
 <img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/pandas.png'>
