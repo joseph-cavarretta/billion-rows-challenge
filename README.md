@@ -38,32 +38,50 @@ The catch in my case is that the data file is larger than my RAM. So processing 
 :clock130:&emsp; Run each script individually using the makefile commands (`make python`, `make polars`, 'make sqlite`, etc)
 
 ## Files:
-`test_python.py`:
--
-`test_pandas.py`: 
-- 
-`test_polars.py`:
--
-`test_duckdb.py`:
--
-`test_sqlite.py`: 
+**test_python.py**:
+- Reads file in chunks
+
+**test_pandas.py**: 
+- Gets count of lines in file via a bash subprocess
+- Read the file in 100 chunks
+- Performs aggregation and sorting on chunks before joining them together and returning results
+
+**test_polars.py**:
+- Reads the file into a lazyframe
+- Streams the aggregations and sorting to materialize the results in batches
+
+**test_duckdb.py**:
+- Creates database `src/db/duckdb/stations.duck_db`
+- Creates table `stations` and loads from file in parallel
+- Runs aggregation query and returns results
+
+**test_sqlite.py**: 
 - Creates database `src/db/sqlite3/stations.db`
 - Creates table `stations` and loads data file
 - Runs aggregation query and returns results
 - Note: using an index on `stations.station` removed `--USE TEMP B-TREE FOR GROUP BY` from the query plan but did not improve query speed (it slowed it by 3-4x). The index also increased db size from 26GB to 44GB - so be weary of disk space.
 
 ## Results
-Python: 000 \
+Python: 000
+<p align="left">
+<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/test_pandas.png'>
+</p>
 Pandas: 351.4027s
 <p align="left">
-<img width='400' alt='Dashboard' src='https://github.com/joseph-cavarretta/photos/blob/main/test_pandas.png'>
+<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/pandas.png'>
 </p>
 Polars: 51.4326s
 <p align="left">
-<img width='400' alt='Dashboard' src='https://github.com/joseph-cavarretta/photos/blob/main/test_polars.png'>
+<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/polars.png'>
 </p>
-DuckDB: 000
-Sqlite: 000
+DuckDB: 13.9680s
+<p align="left">
+<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/duck_db.png'>
+</p>
+Sqlite: 1049.3571s
+<p align="left">
+<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/sqlite_no_index.png'>
+</p>
 
 ## Developed by:
 Joseph Cavarretta &ensp; | &ensp; joseph.m.cavarretta@gmail.com &ensp; | &ensp; [Github](https://github.com/joseph-cavarretta) &ensp; | &ensp; [LinkedIn](https://www.linkedin.com/in/joseph-cavarretta-87242871/)
