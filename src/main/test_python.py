@@ -86,8 +86,5 @@ def test_python(slices):
 
 
 if __name__ == '__main__':
-    num_lines = count_records()
-    start_positions = get_start_positions(num_lines)
-    slices = get_slices(start_positions)
     results = test_python(slices)
     print(*results, sep='\n')

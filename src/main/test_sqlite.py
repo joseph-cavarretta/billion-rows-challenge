@@ -6,7 +6,7 @@ import sqlite3 as sql
 
 
 DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
-DATA = Path('src/data/stations_test.txt').resolve()
+DATA = Path('src/data/stations.txt').resolve()
 TABLE = 'stations'
 COL_1_NAME = 'station'
 COL_1_TYPE = 'TEXT'
