@@ -1,38 +1,33 @@
-import os
-import time
+import sys
 from pathlib import Path
+
 import duckdb as db
 
 
+if len(sys.argv) < 2:
+    print(
+        "Usage: python test_duckdb.py <path-to-stations.txt>", 
+        file=sys.stderr
+    )
+    sys.exit(1)
+
+
+DATA = Path(sys.argv[1]).resolve()
 DB_DIR = Path('src/db/duckdb/').resolve()
 DB_PATH = Path('src/db/duckdb/stations.duck_db').resolve()
-DATA = Path('src/data/stations.txt').resolve()
+
 TABLE = 'stations'
-SCHEMA = {
-    'station': 'VARCHAR',
-    'reading': 'DOUBLE'
-}
-CONFIG = {
-    'threads': 8
-}
 
-
-def timeit(func):
-    def wrapper(*args, **kwargs):
-        t1 = time.perf_counter()
-        res = func(*args, **kwargs)
-        t2 = time.perf_counter()
-        print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
-        return res
-    return wrapper
+SCHEMA = {'station': 'VARCHAR','reading': 'DOUBLE'}
+CONFIG = {'threads': 8}
 
 
 def create_db():
-    if os.path.isfile(DB_PATH):
-        os.remove(DB_PATH)
-    # if first time running, create db directory
-    if not os.path.isdir(DB_DIR):
-        os.makedirs(DB_DIR)
+    if DB_PATH.is_file():
+        DB_PATH.unlink()
+    
+    # mkdir if first time running
+    DB_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def connect_db():
@@ -69,10 +64,9 @@ def get_row_count(conn):
 
 
 def cleanup():
-    os.remove(DB_PATH)
+    DB_PATH.unlink()
 
 
-@timeit
 def test_duckdb(conn):
     query = f"""
         SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)

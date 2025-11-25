@@ -1,5 +1,4 @@
 import os
-import time
 import subprocess
 from pathlib import Path
 import sqlite3 as sql
@@ -12,16 +11,6 @@ COL_1_NAME = 'station'
 COL_1_TYPE = 'TEXT'
 COL_2_NAME = 'reading'
 COL_2_TYPE = 'INTEGER'
-
-
-def timeit(func):
-    def wrapper(*args, **kwargs):
-        t1 = time.perf_counter()
-        res = func(*args, **kwargs)
-        t2 = time.perf_counter()
-        print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
-        return res
-    return wrapper
 
 
 def create_db():
@@ -82,7 +71,6 @@ def get_row_count(conn):
     return results[0][0]
 
 
-@timeit
 def test_sqlite(conn):
     query = f"""
         SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)

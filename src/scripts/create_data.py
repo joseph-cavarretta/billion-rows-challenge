@@ -1,13 +1,17 @@
 import os
+import sys
 import random
 import numpy as np
-from timeit import timeit
 from pathlib import Path
 
 
 RAW_DATA = Path('src/data/stations_raw.txt').resolve()
 OUT_FILE = Path('src/data/stations.txt').resolve()
-RECORDS = 1000000000
+RECORDS = int(sys.argv[1])
+
+
+def valid_record_cnt(records: int) -> bool:
+    return records >=1
 
 
 class CreateData:
@@ -44,7 +48,6 @@ class CreateData:
         return station, random_temp
 
 
-    @timeit
     def create_dataset(self):
         """
         Creates a dataset of size n (self.records) and writes to file
@@ -58,6 +61,13 @@ class CreateData:
 
 
 if __name__ == '__main__':
-    data = CreateData(RAW_DATA, OUT_FILE, RECORDS)
-    data.load_infile()
-    data.create_dataset()
+    if valid_record_cnt(RECORDS):
+        print(f'Creating {RECORDS:,} records...')
+        data = CreateData(RAW_DATA, OUT_FILE, RECORDS)
+        data.load_infile()
+        data.create_dataset()
+    else:
+        print(
+            f'Invalid record count: {RECORDS}. '
+            f'Must be >= 1.'
+        )

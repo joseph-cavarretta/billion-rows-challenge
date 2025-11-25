@@ -1,6 +1,5 @@
 import os
 import subprocess
-import time
 from pathlib import Path
 import pandas as pd
 import warnings
@@ -11,23 +10,12 @@ DATA = Path('src/data/stations.txt').resolve()
 CHUNKS = 100
 
 
-def timeit(func):
-    def wrapper(*args, **kwargs):
-        t1 = time.perf_counter()
-        res = func(*args, **kwargs)
-        t2 = time.perf_counter()
-        print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
-        return res
-    return wrapper
-
-
 def count_records():
     bash = f'wc -l {DATA}'
     num_lines = int(subprocess.check_output(bash, shell=True).split()[0])
     return num_lines
 
 
-@timeit
 def test_pandas(path, lines):
     chunksize = lines // CHUNKS
     records = pd.DataFrame(columns = ['station', 'max', 'min', 'count', 'sum'])

@@ -1,17 +1,40 @@
+DATA = src/data/stations.txt
+ONE_BILLION = 1000000000
+
+
+define REQUIRE_DATA
+	@if [ ! -f "$(DATA)" ]; then \
+	  echo "ERROR: data file '$(DATA)' not found" >&2; \
+	  echo "Hint: run 'make create_data' first."; \
+	  exit 1; \
+	fi; \
+endef
+
+
 create_data:
-	@python3 src/scripts/create_data.py
+	@time python3 src/scripts/create_data.py "$(ONE_BILLION)"
 
 pandas:
-	@python3 src/main/test_pandas.py
+	$(REQUIRE_DATA)
+	@time python3 src/main/python/test_pandas.py "$(DATA)"
 
 polars:
-	@python3 src/main/test_polars.py
+	$(REQUIRE_DATA)
+	@time python3 src/main/python/test_polars.py "$(DATA)"
 
 python:
-	@python3 src/main/test_python.py
+	$(REQUIRE_DATA)
+	@time python3 src/main/python/test_python.py "$(DATA)"
 
 sqlite:
-	@python3 src/main/test_sqlite.py
+	$(REQUIRE_DATA)
+	@time python3 src/main/python/test_sqlite.py "$(DATA)"
 
 duckdb:
-	@python3 src/main/test_duckdb.py
+	$(REQUIRE_DATA)
+	@time python3 src/main/python/test_duckdb.py "$(DATA)"
+
+awk:
+	$(REQUIRE_DATA)
+	@time ./src/main/bash/test_awk.sh "$(DATA)"
+

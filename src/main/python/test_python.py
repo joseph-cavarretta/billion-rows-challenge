@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from multiprocessing import Pool
 
@@ -6,16 +5,6 @@ from multiprocessing import Pool
 DATA = Path('src/data/stations_text.txt').resolve()
 NUM_PARTITIONS = 8
 CORES = 8
-
-
-def timeit(func):
-    def wrapper(*args, **kwargs):
-        t1 = time.perf_counter()
-        res = func(*args, **kwargs)
-        t2 = time.perf_counter()
-        print(f'{func.__name__}() runtime: {(t2 - t1):.4f} seconds')
-        return res
-    return wrapper
 
 
 def get_start_positions(num_lines):
@@ -36,7 +25,7 @@ def get_slices(start_positions):
 def process_file_partition(start, end):
     records = dict()
 
-    with open(DATA, "r") as f:
+    with open(DATA, 'r') as f:
         #lines = f.read().split('\n')[start:end]
 
         for line in f:
@@ -57,7 +46,6 @@ def process_file_partition(start, end):
     return records
 
 
-@timeit
 def test_python(slices):
     with Pool(CORES) as pool:
         res = pool.starmap(
