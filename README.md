@@ -8,7 +8,7 @@ The basic premise of this challenge is to take a csv file containing 1 billion w
 The catch in my case is that the data file is larger than my RAM. So processing the full dataset in memory is not an option.
 
 ## Languages / Tools Tested:
-**PYTHON** - Multi-threaded on 8-cores
+**PYTHON** - Multi-threaded on 12-cores
   
 **PANDAS** - Using chunking on a dataframe to process the file in batches
 
@@ -38,8 +38,7 @@ The catch in my case is that the data file is larger than my RAM. So processing 
 :clock130:&emsp; Run each script individually using the makefile commands (`make python`, `make polars`, 'make sqlite`, etc)
 
 ## Files:
-**test_python.py**:
-- TODO
+**test_python.py**:  
 
 **test_pandas.py**: 
 - Gets count of lines in file via a bash subprocess
@@ -64,19 +63,19 @@ The catch in my case is that the data file is larger than my RAM. So processing 
 ## Results
 Pandas: 351.4027s
 <p align="left">
-<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/pandas.png'>
+<img width='400' src='assets/pandas.png'>
 </p>
 Polars: 51.4326s
 <p align="left">
-<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/polars.png'>
+<img width='400' src='assets/polars.png'>
 </p>
 DuckDB: 13.9680s
 <p align="left">
-<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/duck_db.png'>
+<img width='400' src='assets/duck_db.png'>
 </p>
 Sqlite: 1049.3571s
 <p align="left">
-<img width='400' src='https://github.com/joseph-cavarretta/photos/blob/main/sqlite_no_index.png'>
+<img width='400' src='assets/sqlite_no_index.png'>
 </p>
 
 ## Developed by:
