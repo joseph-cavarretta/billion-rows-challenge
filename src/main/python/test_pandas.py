@@ -1,30 +1,38 @@
+"""Benchmark using pandas for the billion rows challenge."""
+
+import argparse
 import subprocess
+import sys
 import warnings
 from pathlib import Path
 
 import pandas as pd
 
+from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-DATA = Path('src/data/stations.txt').resolve()
+logger = setup_logger(__name__)
+
 CHUNKS = 100
 
 
-def count_records():
-    bash = f'wc -l {DATA}'
-    num_lines = int(subprocess.check_output(bash, shell=True).split()[0])
-    return num_lines
+def count_records(data_path: Path) -> int:
+    """Count the number of lines in the data file."""
+    result = subprocess.run(
+        ['wc', '-l', str(data_path)],
+        capture_output=True,
+        check=True
+    )
+    return int(result.stdout.split()[0])
 
 
 @timeit
 def test_pandas(path: Path, lines: int) -> None:
+    """Run the pandas benchmark."""
     chunksize = lines // CHUNKS
     records = pd.DataFrame(columns = ['station', 'max', 'min', 'count', 'sum'])
-
-    if not path.is_file():
-        raise FileNotFoundError(f'No input file present at {path}')
 
     for df in pd.read_csv(
         path,
@@ -62,6 +70,35 @@ def test_pandas(path: Path, lines: int) -> None:
     print(results[['station', '_max', '_min', '_mean']].sort_values(by='station'))
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Benchmark using pandas'
+    )
+    parser.add_argument(
+        'data_file',
+        type=Path,
+        help='Path to stations.txt'
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    """Run the benchmark."""
+    args = parse_args()
+    try:
+        if not args.data_file.is_file():
+            raise FileNotFoundError(f'No input file present at {args.data_file}')
+
+        logger.info(f'Counting records in {args.data_file}')
+        lines = count_records(args.data_file)
+        logger.info(f'Processing {lines:,} records')
+        test_pandas(args.data_file, lines)
+        return 0
+    except (ValueError, FileNotFoundError) as e:
+        logger.error(str(e))
+        return 1
+
+
 if __name__ == '__main__':
-    lines = count_records()
-    test_pandas(DATA, lines)
+    sys.exit(main())

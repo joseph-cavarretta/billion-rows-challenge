@@ -1,19 +1,15 @@
 """Generate synthetic weather station data for the billion rows challenge."""
 
 import argparse
-import logging
 import random
 import sys
 from pathlib import Path
 
 import numpy as np
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%H:%M:%S'
-)
-logger = logging.getLogger(__name__)
+from src.scripts.logging_config import setup_logger
+
+logger = setup_logger(__name__)
 
 RAW_DATA = Path('src/data/stations_raw.txt').resolve()
 OUT_FILE = Path('src/data/stations.txt').resolve()

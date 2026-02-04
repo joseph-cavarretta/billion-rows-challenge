@@ -1,15 +1,22 @@
+"""Benchmark using pure Python multiprocessing for the billion rows challenge."""
+
+import argparse
+import sys
 from multiprocessing import Pool
 from pathlib import Path
 
+from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
 
-DATA = Path('src/data/stations.txt').resolve()
-PARTITIONS = 12
-CORES = 12
+logger = setup_logger(__name__)
+
+DEFAULT_PARTITIONS = 12
+DEFAULT_CORES = 12
 
 
-def create_ranges(partitions: int) -> list[tuple[int, int]]:
-    size = DATA.stat().st_size
+def create_ranges(data_path: Path, partitions: int) -> list[tuple[int, int]]:
+    """Create byte ranges for file partitioning."""
+    size = data_path.stat().st_size
     chunk_size = size // partitions
     ranges: list[tuple[int, int]] = []
 
@@ -21,10 +28,13 @@ def create_ranges(partitions: int) -> list[tuple[int, int]]:
     return ranges
 
 
-def process_file_partition(start:int, end: int):
+def process_file_partition(
+    data_path: Path, start: int, end: int
+) -> dict[str, list[float | int]]:
+    """Process a partition of the file and return aggregated station data."""
     records: dict[str, list[float | int]] = {}
 
-    with DATA.open("r", encoding="utf-8", newline="") as f:
+    with data_path.open("r", encoding="utf-8", newline="") as f:
         f.seek(start)
 
         if start > 0:
@@ -57,15 +67,23 @@ def process_file_partition(start:int, end: int):
     return records
 
 
-@timeit
-def test_python():
-    ranges = create_ranges(PARTITIONS)
+def _process_partition_wrapper(
+    args: tuple[Path, int, int]
+) -> dict[str, list[float | int]]:
+    """Wrapper for multiprocessing starmap compatibility."""
+    return process_file_partition(*args)
 
-    with Pool(CORES) as pool:
-        res = pool.starmap(
-            process_file_partition,
-            ranges
-        )
+
+@timeit
+def test_python(
+    data_path: Path, partitions: int, cores: int
+) -> list[tuple[str, float, float, float]]:
+    """Run the Python multiprocessing benchmark."""
+    ranges = create_ranges(data_path, partitions)
+    partition_args = [(data_path, start, end) for start, end in ranges]
+
+    with Pool(cores) as pool:
+        res = pool.map(_process_partition_wrapper, partition_args)
 
     merged = res[0]
 
@@ -86,6 +104,49 @@ def test_python():
     ]
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Benchmark using pure Python multiprocessing'
+    )
+    parser.add_argument(
+        'data_file',
+        type=Path,
+        help='Path to stations.txt'
+    )
+    parser.add_argument(
+        '--partitions',
+        type=int,
+        default=DEFAULT_PARTITIONS,
+        help=f'Number of file partitions (default: {DEFAULT_PARTITIONS})'
+    )
+    parser.add_argument(
+        '--cores',
+        type=int,
+        default=DEFAULT_CORES,
+        help=f'Number of CPU cores to use (default: {DEFAULT_CORES})'
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    """Run the benchmark."""
+    args = parse_args()
+    try:
+        if not args.data_file.is_file():
+            raise FileNotFoundError(f'No input file present at {args.data_file}')
+
+        logger.info(
+            f'Processing {args.data_file} with {args.partitions} partitions '
+            f'and {args.cores} cores'
+        )
+        results = test_python(args.data_file, args.partitions, args.cores)
+        print(*results, sep='\n')
+        return 0
+    except (ValueError, FileNotFoundError) as e:
+        logger.error(str(e))
+        return 1
+
+
 if __name__ == '__main__':
-    results = test_python()
-    print(*results, sep='\n')
+    sys.exit(main())
