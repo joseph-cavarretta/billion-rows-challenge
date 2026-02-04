@@ -1,15 +1,13 @@
 DATA = src/data/stations.txt
 ONE_BILLION = 1000000000
 
-
 define REQUIRE_DATA
 	@if [ ! -f "$(DATA)" ]; then \
 	  echo "ERROR: data file '$(DATA)' not found" >&2; \
 	  echo "Hint: run 'make create_data' first."; \
 	  exit 1; \
-	fi; \
+	fi
 endef
-
 
 create_data:
 	@time python3 src/scripts/create_data.py "$(ONE_BILLION)"

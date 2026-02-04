@@ -3,10 +3,11 @@ from pathlib import Path
 
 import duckdb as db
 
+from src.scripts.timeit import timeit
 
 if len(sys.argv) < 2:
     print(
-        "Usage: python test_duckdb.py <path-to-stations.txt>", 
+        "Usage: python test_duckdb.py <path-to-stations.txt>",
         file=sys.stderr
     )
     sys.exit(1)
@@ -25,7 +26,7 @@ CONFIG = {'threads': 8}
 def create_db():
     if DB_PATH.is_file():
         DB_PATH.unlink()
-    
+
     # mkdir if first time running
     DB_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -38,7 +39,7 @@ def connect_db():
 def create_table(conn):
     ddl = f"""
         CREATE OR REPLACE TABLE stations AS
-            SELECT * 
+            SELECT *
             FROM read_csv(
                 '{DATA}',
                 parallel=True,
@@ -67,7 +68,8 @@ def cleanup():
     DB_PATH.unlink()
 
 
-def test_duckdb(conn):
+@timeit
+def test_duckdb(conn: db.DuckDBPyConnection) -> None:
     query = f"""
         SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)
         FROM {TABLE}

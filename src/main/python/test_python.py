@@ -1,78 +1,91 @@
-from pathlib import Path
 from multiprocessing import Pool
+from pathlib import Path
+
+from src.scripts.timeit import timeit
+
+DATA = Path('src/data/stations.txt').resolve()
+PARTITIONS = 12
+CORES = 12
 
 
-DATA = Path('src/data/stations_text.txt').resolve()
-NUM_PARTITIONS = 8
-CORES = 8
+def create_ranges(partitions: int) -> list[tuple[int, int]]:
+    size = DATA.stat().st_size
+    chunk_size = size // partitions
+    ranges: list[tuple[int, int]] = []
+
+    for i in range(partitions):
+        start = i * chunk_size
+        end = size if i == partitions - 1 else (i + 1) * chunk_size
+        ranges.append((start, end))
+
+    return ranges
 
 
-def get_start_positions(num_lines):
-    part_size = num_lines // NUM_PARTITIONS
-    start_positions = [
-        i * part_size for i in range(NUM_PARTITIONS)
-    ]
-    return start_positions
+def process_file_partition(start:int, end: int):
+    records: dict[str, list[float | int]] = {}
 
+    with DATA.open("r", encoding="utf-8", newline="") as f:
+        f.seek(start)
 
-def get_slices(start_positions):
-    slices = list()
-    for start, end in zip(start_positions, start_positions[1:]):
-        slices.append((start, end))
-    return slices
+        if start > 0:
+            # read and discard first line
+            f.readline()
 
+        while True:
+            pos = f.tell()
+            if pos >= end:
+                break
 
-def process_file_partition(start, end):
-    records = dict()
+            line = f.readline()
+            if not line:
+                break
 
-    with open(DATA, 'r') as f:
-        #lines = f.read().split('\n')[start:end]
+            station, measure = line.split(';', 1)
+            measure = float(measure)
 
-        for line in f:
-            vals = line.split(';')
-            station = vals[0]
-            measurement = float(vals[1])
-
-            try:
-                record = records[station]
-                record[0] = min(record[0], measurement)
-                record[1] = max(record[1], measurement)
-                record[2] += measurement
-                record[3] += 1
-
-            except KeyError:
-                records[station] = [measurement, measurement, measurement, 1]
+            s = records.get(station)
+            if s is None:
+                records[station] = [
+                    measure, measure, measure, 1
+                ]
+            else:
+                s[0] = min(s[0], measure)
+                s[1] = max(s[1], measure)
+                s[2] = s[2] + measure
+                s[3] = s[3] + 1
 
     return records
 
 
-def test_python(slices):
+@timeit
+def test_python():
+    ranges = create_ranges(PARTITIONS)
+
     with Pool(CORES) as pool:
         res = pool.starmap(
             process_file_partition,
-            slices
+            ranges
         )
 
-    records = dict()
-    
-    for chunk in res:
-        for station, (min_, max_, sum_, count) in chunk.items():
-            try:
-                record = records[station]
-                record[0] = min(record[0], min_)
-                record[1] = max(record[1], max_)
-                record[2] += sum_
-                record[3] += count
-            except KeyError:
-                records[station] = [min_, max_, sum_, count]
+    merged = res[0]
+
+    for chunk in res[1:]:
+        for station, (min_, max_, sum_, cnt_) in chunk.items():
+            s = merged.get(station)
+            if s is None:
+                merged[station] = [min_, max_, sum_, cnt_]
+            else:
+                s[0] = min(min_, s[0])
+                s[1] = max(max_, s[1])
+                s[2] += sum_
+                s[3] += 1
 
     return [
-        (station, min_, max_, round(sum_ / count, 3)) for
-        (station, (min_, max_, sum_, count)) in list(sorted(records.items()))
+        (station, min_, max_, round(sum_ / cnt_, 3)) for
+        station, (min_, max_, sum_, cnt_) in list(sorted(merged.items()))
     ]
 
 
-
 if __name__ == '__main__':
-    results = test_python(slices)
+    results = test_python()
     print(*results, sep='\n')

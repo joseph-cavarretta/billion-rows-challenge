@@ -1,10 +1,12 @@
-import os
 import subprocess
-from pathlib import Path
-import pandas as pd
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
+from pathlib import Path
 
+import pandas as pd
+
+from src.scripts.timeit import timeit
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 DATA = Path('src/data/stations.txt').resolve()
 CHUNKS = 100
@@ -16,18 +18,19 @@ def count_records():
     return num_lines
 
 
-def test_pandas(path, lines):
+@timeit
+def test_pandas(path: Path, lines: int) -> None:
     chunksize = lines // CHUNKS
     records = pd.DataFrame(columns = ['station', 'max', 'min', 'count', 'sum'])
 
-    if not os.path.isfile(path):
-        raise Exception(f'No input file present at {path}')
-    
+    if not path.is_file():
+        raise FileNotFoundError(f'No input file present at {path}')
+
     for df in pd.read_csv(
-        path, 
-        sep=';', 
-        header=None, 
-        names=['station', 'reading'], 
+        path,
+        sep=';',
+        header=None,
+        names=['station', 'reading'],
         dtype={'station': 'category'},
         chunksize=chunksize
     ):
@@ -44,7 +47,7 @@ def test_pandas(path, lines):
                     }
                 )
         records = pd.concat([records, tmp])
-    
+
     results = records.groupby('station', observed=True) \
                 .agg(
                     _max=('max', 'max'),
@@ -53,7 +56,7 @@ def test_pandas(path, lines):
                     _sum=('sum', 'sum')
                     ) \
                 .reset_index()
-    
+
     results['_mean'] = results['_sum'] / results['_count']
 
     print(results[['station', '_max', '_min', '_mean']].sort_values(by='station'))

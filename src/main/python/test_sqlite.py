@@ -1,8 +1,8 @@
-import os
+import sqlite3 as sql
 import subprocess
 from pathlib import Path
-import sqlite3 as sql
 
+from src.scripts.timeit import timeit
 
 DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
 DATA = Path('src/data/stations.txt').resolve()
@@ -13,12 +13,11 @@ COL_2_NAME = 'reading'
 COL_2_TYPE = 'INTEGER'
 
 
-def create_db():
-    if os.path.isfile(DB_PATH):
-        os.remove(DB_PATH)
-    # create new instance of db
-    with open(DB_PATH, 'w'): pass
-    print(f'DB created')
+def create_db() -> None:
+    if DB_PATH.is_file():
+        DB_PATH.unlink()
+    DB_PATH.touch()
+    print('DB created')
 
 
 def connect_db():
@@ -29,10 +28,10 @@ def connect_db():
 def create_table(conn):
     ddl = f"""
         CREATE TABLE IF NOT EXISTS {TABLE} (
-            {COL_1_NAME} {COL_1_TYPE}, 
+            {COL_1_NAME} {COL_1_TYPE},
             {COL_2_NAME} {COL_2_TYPE}
         )"""
-    
+
     conn.execute(ddl)
     print(f'Table {TABLE} created')
 
@@ -46,7 +45,7 @@ def create_index(conn):
 
 
 def load_db(conn):
-    stdout = subprocess.run(
+    subprocess.run(
         [
             'sqlite3',
             str(DB_PATH),
@@ -55,7 +54,8 @@ def load_db(conn):
             '.separator ;',
             '.import ' + str(DATA) + ' ' + TABLE
         ],
-    capture_output=True
+        capture_output=True,
+        check=True,
     )
     row_count = get_row_count(conn)
     print(f'Table {TABLE} loaded with {row_count} rows')
@@ -71,7 +71,8 @@ def get_row_count(conn):
     return results[0][0]
 
 
-def test_sqlite(conn):
+@timeit
+def test_sqlite(conn: sql.Connection) -> None:
     query = f"""
         SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)
         FROM {TABLE}
@@ -83,8 +84,8 @@ def test_sqlite(conn):
     results = rows.fetchall()
     print(*results, sep='\n')
 
-def cleanup():
-    os.remove(DB_PATH)
+def cleanup() -> None:
+    DB_PATH.unlink()
 
 
 if __name__ == '__main__':
