@@ -12,9 +12,9 @@ Results on 1 billion rows (14GB CSV).
 |------|--------|-----------|------------------------------|
 | 1    | DuckDB | 13.97s    | OLAP columnar database       |
 | 2    | Polars | 51.43s    | Streaming lazy evaluation    |
-| 3    | Pandas | 351.40s   | Chunked DataFrame processing |
-| 4    | SQLite | 1049.36s  | OLTP row-based database      |
-| -    | Python | TBD       | Multiprocessing              |
+| 3    | Python | 174.18s   | Multiprocessing              |
+| 4    | Pandas | 351.40s   | Chunked DataFrame processing |
+| 5    | SQLite | 1049.36s  | OLTP row-based database      |
 | -    | AWK    | TBD       | Bash script                  |
 
 ## System Specs
@@ -38,11 +38,12 @@ make duckdb
 make polars
 make pandas
 make sqlite
+make python
 ```
 
 ## Project Status
 
-Work in progress. Python multiprocessing and AWK implementations are not yet benchmarked.
+Work in progress. AWK implementation is not yet benchmarked.
 
 ## Author
 
