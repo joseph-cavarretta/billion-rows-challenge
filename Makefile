@@ -1,5 +1,6 @@
 DATA = src/data/stations.txt
 ONE_BILLION = 1000000000
+TIME = /usr/bin/time -p
 
 define REQUIRE_DATA
 	@if [ ! -f "$(DATA)" ]; then \
@@ -10,29 +11,30 @@ define REQUIRE_DATA
 endef
 
 create_data:
-	@time python3 src/scripts/create_data.py "$(ONE_BILLION)"
+	@$(TIME) python3 src/scripts/create_data.py "$(ONE_BILLION)"
 
 pandas:
 	$(REQUIRE_DATA)
-	@time python3 src/main/python/test_pandas.py "$(DATA)"
+	@$(TIME) python3 src/main/python/test_pandas.py "$(DATA)"
 
 polars:
 	$(REQUIRE_DATA)
-	@time python3 src/main/python/test_polars.py "$(DATA)"
+	@$(TIME) python3 src/main/python/test_polars.py "$(DATA)"
 
 python:
 	$(REQUIRE_DATA)
-	@time python3 src/main/python/test_python.py "$(DATA)"
+	@$(TIME) python3 src/main/python/test_python.py "$(DATA)"
 
 sqlite:
 	$(REQUIRE_DATA)
-	@time python3 src/main/python/test_sqlite.py "$(DATA)"
+	@python3 src/main/python/test_sqlite.py load "$(DATA)"
+	@$(TIME) python3 src/main/python/test_sqlite.py query
+	@python3 src/main/python/test_sqlite.py cleanup
 
 duckdb:
 	$(REQUIRE_DATA)
-	@time python3 src/main/python/test_duckdb.py "$(DATA)"
+	@$(TIME) python3 src/main/python/test_duckdb.py "$(DATA)"
 
 awk:
 	$(REQUIRE_DATA)
-	@time ./src/main/bash/test_awk.sh "$(DATA)"
-
+	@$(TIME) ./src/main/bash/test_awk.sh "$(DATA)"
