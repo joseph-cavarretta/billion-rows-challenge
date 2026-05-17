@@ -4,15 +4,12 @@ from pathlib import Path
 
 import polars as pl
 
-from src.scripts.timeit import timeit
-
 # streaming chunk size for polars lazy evaluation
-STREAMING_CHUNK_SIZE = 8_000_000
+STREAMING_CHUNK_SIZE = 10_000_000
 
 pl.Config.set_streaming_chunk_size(STREAMING_CHUNK_SIZE)
 
 
-@timeit
 def test_polars(path: Path) -> None:
     """Run the polars benchmark."""
     df = pl.scan_csv(
@@ -24,7 +21,7 @@ def test_polars(path: Path) -> None:
         _mean=pl.mean('reading'),
         _max=pl.max('reading'),
         _min=pl.min('reading')
-    ).sort('station').collect(streaming=True)
+    ).sort('station').collect(engine='streaming')
     print(df)
 
 
@@ -48,8 +45,6 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        print(f'Num max threads: {pl.thread_pool_size()}')
-        print(f'Processing {args.data_file}')
         test_polars(args.data_file)
         return 0
     except (ValueError, FileNotFoundError) as e:

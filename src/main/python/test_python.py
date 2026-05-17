@@ -3,8 +3,6 @@ import sys
 from multiprocessing import Pool
 from pathlib import Path
 
-from src.scripts.timeit import timeit
-
 DEFAULT_PARTITIONS = 12
 DEFAULT_CORES = 12
 # per-partition buffer size
@@ -97,7 +95,6 @@ def _process_partition_wrapper(
     return process_file_partition(*args)
 
 
-@timeit
 def test_python(
     data_path: Path, partitions: int, cores: int
 ) -> list[tuple[str, float, float, float]]:
@@ -163,10 +160,6 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        print(
-            f'Processing {args.data_file} with {args.partitions} partitions '
-            f'and {args.cores} cores'
-        )
         results = test_python(args.data_file, args.partitions, args.cores)
         print(*results, sep='\n')
         return 0
