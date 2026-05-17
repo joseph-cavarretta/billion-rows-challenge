@@ -8,14 +8,14 @@ Inspired by [Gunnar Morling's 1BRC](https://github.com/gunnarmorling/1brc), this
 
 Results on 1 billion rows (14GB CSV).
 
-| Rank | Tool   | Time      | Method                       |
-|------|--------|-----------|------------------------------|
-| 1    | DuckDB | 13.97s    | OLAP columnar database       |
-| 2    | Polars | 51.43s    | Streaming lazy evaluation    |
-| 3    | Python | 174.18s   | Multiprocessing              |
-| 4    | Pandas | 351.40s   | Chunked DataFrame processing |
-| 5    | SQLite | 1049.36s  | OLTP row-based database      |
-| -    | AWK    | TBD       | Bash script                  |
+| Rank | Tool   | Cold      | Warm      | Method                       |
+|------|--------|-----------|-----------|------------------------------|
+| 1    | Polars | 9.81s     | 9.12s     | Streaming lazy evaluation    |
+| 2    | DuckDB | 12.69s    | 12.56s    | OLAP columnar database       |
+| 3    | Pandas | 116.08s   | 114.09s   | Chunked DataFrame processing |
+| 4    | Python | 174.18s   | 73.54s    | Multiprocessing              |
+| 5    | SQLite | 496.74s   | 496.74s   | OLTP row-based database      |
+| -    | AWK    | TBD       | TBD       | Bash script                  |
 
 ## System Specs
 
