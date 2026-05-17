@@ -4,11 +4,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from src.scripts.timeit import timeit
-
 DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
 TABLE = 'stations'
-SCHEMA = {'station': 'TEXT', 'reading': 'INTEGER'}
+SCHEMA = {'station': 'TEXT', 'reading': 'REAL'}
 
 
 def create_db() -> None:
@@ -17,7 +15,6 @@ def create_db() -> None:
         DB_PATH.unlink()
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     DB_PATH.touch()
-    print('Database created')
 
 
 def connect_db() -> sql.Connection:
@@ -32,12 +29,10 @@ def create_table(conn: sql.Connection) -> None:
         CREATE TABLE IF NOT EXISTS {TABLE} (
             {columns}
         )"""
-
     conn.execute(ddl)
-    print(f'Table {TABLE} created')
 
 
-def load_db(conn: sql.Connection, data_path: Path) -> None:
+def load_db(data_path: Path) -> None:
     """Load data from CSV into the database."""
     subprocess.run(
         [
@@ -51,26 +46,12 @@ def load_db(conn: sql.Connection, data_path: Path) -> None:
         capture_output=True,
         check=True,
     )
-    row_count = get_row_count(conn)
-    print(f'Table {TABLE} loaded with {row_count:,} rows')
 
 
-def get_row_count(conn: sql.Connection) -> int:
-    """Get the number of rows in the stations table."""
-    query = f"""
-        SELECT COUNT(1) FROM {TABLE}
-    """
-    cursor = conn.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
-    return results[0][0]
-
-
-@timeit
 def test_sqlite(conn: sql.Connection) -> None:
     """Run the SQLite benchmark query."""
     query = f"""
-        SELECT station, ROUND(AVG(reading),3) , MIN(reading), MAX(reading)
+        SELECT station, ROUND(AVG(reading),3), MIN(reading), MAX(reading)
         FROM {TABLE}
         GROUP BY station
         ORDER BY station
@@ -83,20 +64,21 @@ def test_sqlite(conn: sql.Connection) -> None:
 
 def cleanup() -> None:
     """Remove the database file."""
-    DB_PATH.unlink()
-    print('Database cleaned up')
+    if DB_PATH.is_file():
+        DB_PATH.unlink()
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description='Benchmark using SQLite'
-    )
-    parser.add_argument(
-        'data_file',
-        type=Path,
-        help='Path to stations.txt'
-    )
+    parser = argparse.ArgumentParser(description='Benchmark using SQLite')
+    sub = parser.add_subparsers(dest='command', required=True)
+
+    load = sub.add_parser('load', help='Create DB and load CSV')
+    load.add_argument('data_file', type=Path, help='Path to stations.txt')
+
+    sub.add_parser('query', help='Run the aggregation query')
+    sub.add_parser('cleanup', help='Remove the DB file')
+
     return parser.parse_args()
 
 
@@ -104,16 +86,18 @@ def main() -> int:
     """Run the benchmark."""
     args = parse_args()
     try:
-        if not args.data_file.is_file():
-            raise FileNotFoundError(f'No input file present at {args.data_file}')
-
-        print(f'Processing {args.data_file}')
-        create_db()
-        conn = connect_db()
-        create_table(conn)
-        load_db(conn, args.data_file)
-        test_sqlite(conn)
-        cleanup()
+        if args.command == 'load':
+            if not args.data_file.is_file():
+                raise FileNotFoundError(f'No input file present at {args.data_file}')
+            create_db()
+            conn = connect_db()
+            create_table(conn)
+            load_db(args.data_file)
+        elif args.command == 'query':
+            conn = connect_db()
+            test_sqlite(conn)
+        elif args.command == 'cleanup':
+            cleanup()
         return 0
     except (ValueError, FileNotFoundError) as e:
         print(str(e))
