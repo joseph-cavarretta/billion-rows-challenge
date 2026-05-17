@@ -1,17 +1,14 @@
-"""Benchmark using pure Python multiprocessing for the billion rows challenge."""
-
 import argparse
 import sys
 from multiprocessing import Pool
 from pathlib import Path
 
-from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
-
-logger = setup_logger(__name__)
 
 DEFAULT_PARTITIONS = 12
 DEFAULT_CORES = 12
+# per-partition buffer size
+CHUNK_SIZE = 8 * 1024 * 1024
 
 
 def create_ranges(data_path: Path, partitions: int) -> list[tuple[int, int]]:
@@ -34,33 +31,59 @@ def process_file_partition(
     """Process a partition of the file and return aggregated station data."""
     records: dict[str, list[float | int]] = {}
 
-    with data_path.open("r", encoding="utf-8", newline="") as f:
+    with data_path.open("rb") as f:
         f.seek(start)
 
         if start > 0:
             # read and discard first line
             f.readline()
 
-        while True:
-            pos = f.tell()
-            if pos >= end:
-                break
+        remaining = end - f.tell()
+        leftover = b""
 
-            line = f.readline()
-            if not line:
-                break
+        while remaining > 0:
+            to_read = min(CHUNK_SIZE, remaining)
+            buf = leftover + f.read(to_read)
+            remaining -= to_read
 
-            station, measure = line.split(';', 1)
-            measure = float(measure)
+            last_nl = buf.rfind(b'\n')
+            if last_nl == -1:
+                leftover = buf
+                continue
+            leftover = buf[last_nl + 1:]
+
+            for line in buf[:last_nl].split(b'\n'):
+                if not line:
+                    continue
+
+                station, measure = line.split(b';', 1)
+                measure = int(float(measure) * 1000)
+
+                s = records.get(station)
+
+                if s is None:
+                    records[station] = [
+                        measure, measure, measure, 1
+                    ]
+                else:
+                    s[0] = s[0] if s[0] < measure else measure
+                    s[1] = s[1] if s[1] > measure else measure
+                    s[2] = s[2] + measure
+                    s[3] = s[3] + 1
+
+        if leftover:
+            station, measure = leftover.split(b';', 1)
+            measure = int(float(measure) * 1000)
 
             s = records.get(station)
+
             if s is None:
                 records[station] = [
                     measure, measure, measure, 1
                 ]
             else:
-                s[0] = min(s[0], measure)
-                s[1] = max(s[1], measure)
+                s[0] = s[0] if s[0] < measure else measure
+                s[1] = s[1] if s[1] > measure else measure
                 s[2] = s[2] + measure
                 s[3] = s[3] + 1
 
@@ -93,14 +116,18 @@ def test_python(
             if s is None:
                 merged[station] = [min_, max_, sum_, cnt_]
             else:
-                s[0] = min(min_, s[0])
-                s[1] = max(max_, s[1])
+                s[0] = min_ if min_ < s[0] else s[0]
+                s[1] = max_ if max_ > s[1] else s[1]
                 s[2] += sum_
-                s[3] += 1
+                s[3] += cnt_
 
     return [
-        (station, min_, max_, round(sum_ / cnt_, 3)) for
-        station, (min_, max_, sum_, cnt_) in list(sorted(merged.items()))
+        (
+            station, 
+            float(min_) / 1000, 
+            float(max_) / 1000, 
+            round(float(sum_) / float(cnt_) / 1000, 3)
+        ) for station, (min_, max_, sum_, cnt_) in sorted(merged.items())
     ]
 
 
@@ -136,7 +163,7 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        logger.info(
+        print(
             f'Processing {args.data_file} with {args.partitions} partitions '
             f'and {args.cores} cores'
         )
@@ -144,7 +171,7 @@ def main() -> int:
         print(*results, sep='\n')
         return 0
     except (ValueError, FileNotFoundError) as e:
-        logger.error(str(e))
+        print(str(e))
         return 1
 
 
