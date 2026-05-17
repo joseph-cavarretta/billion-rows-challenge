@@ -1,15 +1,10 @@
-"""Benchmark using polars for the billion rows challenge."""
-
 import argparse
 import sys
 from pathlib import Path
 
 import polars as pl
 
-from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
-
-logger = setup_logger(__name__)
 
 # streaming chunk size for polars lazy evaluation
 STREAMING_CHUNK_SIZE = 8_000_000
@@ -53,12 +48,12 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        logger.info(f'Num max threads: {pl.thread_pool_size()}')
-        logger.info(f'Processing {args.data_file}')
+        print(f'Num max threads: {pl.thread_pool_size()}')
+        print(f'Processing {args.data_file}')
         test_polars(args.data_file)
         return 0
     except (ValueError, FileNotFoundError) as e:
-        logger.error(str(e))
+        print(str(e))
         return 1
 
 

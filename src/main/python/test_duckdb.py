@@ -1,15 +1,10 @@
-"""Benchmark using DuckDB for the billion rows challenge."""
-
 import argparse
 import sys
 from pathlib import Path
 
 import duckdb as db
 
-from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
-
-logger = setup_logger(__name__)
 
 DB_DIR = Path('src/db/duckdb/').resolve()
 DB_PATH = Path('src/db/duckdb/stations.duck_db').resolve()
@@ -25,7 +20,7 @@ def create_db() -> None:
         DB_PATH.unlink()
 
     DB_DIR.mkdir(parents=True, exist_ok=True)
-    logger.info('Database directory created')
+    print('Database directory created')
 
 
 def connect_db() -> db.DuckDBPyConnection:
@@ -48,9 +43,9 @@ def create_table(conn: db.DuckDBPyConnection, data_path: Path) -> None:
             )
         """
     conn.execute(ddl)
-    logger.info(f'Table {TABLE} created')
+    print(f'Table {TABLE} created')
     row_count = get_row_count(conn)
-    logger.info(f'Table {TABLE} loaded with {row_count:,} rows')
+    print(f'Table {TABLE} loaded with {row_count:,} rows')
 
 
 def get_row_count(conn: db.DuckDBPyConnection) -> int:
@@ -66,7 +61,7 @@ def get_row_count(conn: db.DuckDBPyConnection) -> int:
 def cleanup() -> None:
     """Remove the database file."""
     DB_PATH.unlink()
-    logger.info('Database cleaned up')
+    print('Database cleaned up')
 
 
 @timeit
@@ -104,7 +99,7 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        logger.info(f'Processing {args.data_file}')
+        print(f'Processing {args.data_file}')
         create_db()
         conn = connect_db()
         create_table(conn, args.data_file)
@@ -112,7 +107,7 @@ def main() -> int:
         cleanup()
         return 0
     except (ValueError, FileNotFoundError) as e:
-        logger.error(str(e))
+        print(str(e))
         return 1
 
 

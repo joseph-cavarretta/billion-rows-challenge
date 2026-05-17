@@ -1,15 +1,10 @@
-"""Benchmark using SQLite for the billion rows challenge."""
-
 import argparse
 import sqlite3 as sql
 import subprocess
 import sys
 from pathlib import Path
 
-from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
-
-logger = setup_logger(__name__)
 
 DB_PATH = Path('src/db/sqlite3/stations.db').resolve()
 TABLE = 'stations'
@@ -22,7 +17,7 @@ def create_db() -> None:
         DB_PATH.unlink()
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     DB_PATH.touch()
-    logger.info('Database created')
+    print('Database created')
 
 
 def connect_db() -> sql.Connection:
@@ -39,7 +34,7 @@ def create_table(conn: sql.Connection) -> None:
         )"""
 
     conn.execute(ddl)
-    logger.info(f'Table {TABLE} created')
+    print(f'Table {TABLE} created')
 
 
 def load_db(conn: sql.Connection, data_path: Path) -> None:
@@ -57,7 +52,7 @@ def load_db(conn: sql.Connection, data_path: Path) -> None:
         check=True,
     )
     row_count = get_row_count(conn)
-    logger.info(f'Table {TABLE} loaded with {row_count:,} rows')
+    print(f'Table {TABLE} loaded with {row_count:,} rows')
 
 
 def get_row_count(conn: sql.Connection) -> int:
@@ -89,7 +84,7 @@ def test_sqlite(conn: sql.Connection) -> None:
 def cleanup() -> None:
     """Remove the database file."""
     DB_PATH.unlink()
-    logger.info('Database cleaned up')
+    print('Database cleaned up')
 
 
 def parse_args() -> argparse.Namespace:
@@ -112,7 +107,7 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        logger.info(f'Processing {args.data_file}')
+        print(f'Processing {args.data_file}')
         create_db()
         conn = connect_db()
         create_table(conn)
@@ -121,7 +116,7 @@ def main() -> int:
         cleanup()
         return 0
     except (ValueError, FileNotFoundError) as e:
-        logger.error(str(e))
+        print(str(e))
         return 1
 
 

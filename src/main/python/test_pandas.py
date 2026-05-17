@@ -1,5 +1,3 @@
-"""Benchmark using pandas for the billion rows challenge."""
-
 import argparse
 import subprocess
 import sys
@@ -8,12 +6,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.scripts.logging_config import setup_logger
 from src.scripts.timeit import timeit
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
-logger = setup_logger(__name__)
 
 CHUNKS = 100
 
@@ -90,13 +85,13 @@ def main() -> int:
         if not args.data_file.is_file():
             raise FileNotFoundError(f'No input file present at {args.data_file}')
 
-        logger.info(f'Counting records in {args.data_file}')
+        print(f'Counting records in {args.data_file}')
         lines = count_records(args.data_file)
-        logger.info(f'Processing {lines:,} records')
+        print(f'Processing {lines:,} records')
         test_pandas(args.data_file, lines)
         return 0
     except (ValueError, FileNotFoundError) as e:
-        logger.error(str(e))
+        print(str(e))
         return 1
 
 
