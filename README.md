@@ -12,10 +12,11 @@ Results on 1 billion rows (14GB CSV).
 |------|--------|-----------|-----------|------------------------------|
 | 1    | Polars | 9.81s     | 9.12s     | Streaming lazy evaluation    |
 | 2    | DuckDB | 12.69s    | 12.56s    | OLAP columnar database       |
-| 3    | Pandas | 116.08s   | 114.09s   | Chunked DataFrame processing |
-| 4    | Python | 174.18s   | 73.54s    | Multiprocessing              |
-| 5    | AWK    | 255.77s   | 255.77s   | mawk + LC_ALL=C              |
-| 6    | SQLite | 496.74s   | 496.74s   | OLTP row-based database      |
+| 3    | AWK    | 38.09s    | 38.34s    | mawk + GNU parallel          |
+| 4    | Pandas | 116.08s   | 114.09s   | Chunked DataFrame processing |
+| 5    | Python | 174.18s   | 73.54s    | Multiprocessing              |
+| 6    | AWK    | 255.77s   | 255.77s   | mawk single-threaded         |
+| 7    | SQLite | 496.74s   | 496.74s   | OLTP row-based database      |
 
 ## System Specs
 
