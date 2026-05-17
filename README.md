@@ -14,8 +14,8 @@ Results on 1 billion rows (14GB CSV).
 | 2    | DuckDB | 12.69s    | 12.56s    | OLAP columnar database       |
 | 3    | Pandas | 116.08s   | 114.09s   | Chunked DataFrame processing |
 | 4    | Python | 174.18s   | 73.54s    | Multiprocessing              |
-| 5    | SQLite | 496.74s   | 496.74s   | OLTP row-based database      |
-| -    | AWK    | TBD       | TBD       | Bash script                  |
+| 5    | AWK    | 255.77s   | 255.77s   | mawk + LC_ALL=C              |
+| 6    | SQLite | 496.74s   | 496.74s   | OLTP row-based database      |
 
 ## System Specs
 

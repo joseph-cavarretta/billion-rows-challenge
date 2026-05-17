@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-
 data=$1
 
-awk -F';' '
-{ 
+LC_ALL=C mawk -F';' '
+{
   station = $1
   value   = $2 + 0
- 
+
   if (station in cnt) {
     if (value < min[station]) min[station] = value
     if (value > max[station]) max[station] = value
@@ -26,4 +25,4 @@ END {
     print s, min[s], max[s], avg
   }
 }
-' "$data" | sort -k1
+' "$data" | LC_ALL=C sort -k1
