@@ -4,7 +4,7 @@ from pathlib import Path
 
 import duckdb as db
 
-SCHEMA = {'station': 'VARCHAR', 'reading': 'DOUBLE'}
+SCHEMA = {"station": "VARCHAR", "reading": "DOUBLE"}
 
 
 def test_duckdb(data_path: Path) -> None:
@@ -23,13 +23,13 @@ def test_duckdb(data_path: Path) -> None:
     """
     conn = db.connect()
     results = conn.execute(query).fetchall()
-    print(*results, sep='\n')
+    print(*results, sep="\n")
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='Benchmark using DuckDB')
-    parser.add_argument('data_file', type=Path, help='Path to stations.txt')
+    parser = argparse.ArgumentParser(description="Benchmark using DuckDB")
+    parser.add_argument("data_file", type=Path, help="Path to stations.txt")
     return parser.parse_args()
 
 
@@ -38,7 +38,7 @@ def main() -> int:
     args = parse_args()
     try:
         if not args.data_file.is_file():
-            raise FileNotFoundError(f'No input file present at {args.data_file}')
+            raise FileNotFoundError(f"No input file present at {args.data_file}")
 
         test_duckdb(args.data_file)
         return 0
@@ -47,5 +47,5 @@ def main() -> int:
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

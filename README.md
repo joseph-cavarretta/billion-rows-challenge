@@ -1,5 +1,7 @@
 # Billion Rows Challenge
 
+[![CI](https://github.com/joseph-cavarretta/billion-rows-challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/joseph-cavarretta/billion-rows-challenge/actions/workflows/ci.yml)
+
 Benchmarking data processing tools by aggregating 1 billion weather station readings.
 
 Inspired by [Gunnar Morling's 1BRC](https://github.com/gunnarmorling/1brc), this project tests how fast common data engineering tools can process a 14GB CSV file.
@@ -40,11 +42,8 @@ make polars
 make pandas
 make sqlite
 make python
+make awk
 ```
-
-## Project Status
-
-Work in progress. AWK implementation is not yet benchmarked.
 
 ## Author
 
