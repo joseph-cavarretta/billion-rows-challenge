@@ -44,25 +44,23 @@ def process_file_partition(
             buf = leftover + f.read(to_read)
             remaining -= to_read
 
-            last_nl = buf.rfind(b'\n')
+            last_nl = buf.rfind(b"\n")
             if last_nl == -1:
                 leftover = buf
                 continue
-            leftover = buf[last_nl + 1:]
+            leftover = buf[last_nl + 1 :]
 
-            for line in buf[:last_nl].split(b'\n'):
+            for line in buf[:last_nl].split(b"\n"):
                 if not line:
                     continue
 
-                station, measure = line.split(b';', 1)
+                station, measure = line.split(b";", 1)
                 measure = int(float(measure) * 1000)
 
                 s = records.get(station)
 
                 if s is None:
-                    records[station] = [
-                        measure, measure, measure, 1
-                    ]
+                    records[station] = [measure, measure, measure, 1]
                 else:
                     s[0] = s[0] if s[0] < measure else measure
                     s[1] = s[1] if s[1] > measure else measure
@@ -70,15 +68,13 @@ def process_file_partition(
                     s[3] = s[3] + 1
 
         if leftover:
-            station, measure = leftover.split(b';', 1)
+            station, measure = leftover.split(b";", 1)
             measure = int(float(measure) * 1000)
 
             s = records.get(station)
 
             if s is None:
-                records[station] = [
-                    measure, measure, measure, 1
-                ]
+                records[station] = [measure, measure, measure, 1]
             else:
                 s[0] = s[0] if s[0] < measure else measure
                 s[1] = s[1] if s[1] > measure else measure
@@ -89,7 +85,7 @@ def process_file_partition(
 
 
 def _process_partition_wrapper(
-    args: tuple[Path, int, int]
+    args: tuple[Path, int, int],
 ) -> dict[str, list[float | int]]:
     """Wrapper for multiprocessing starmap compatibility."""
     return process_file_partition(*args)
@@ -120,35 +116,32 @@ def test_python(
 
     return [
         (
-            station, 
-            float(min_) / 1000, 
-            float(max_) / 1000, 
-            round(float(sum_) / float(cnt_) / 1000, 3)
-        ) for station, (min_, max_, sum_, cnt_) in sorted(merged.items())
+            station,
+            float(min_) / 1000,
+            float(max_) / 1000,
+            round(float(sum_) / float(cnt_) / 1000, 3),
+        )
+        for station, (min_, max_, sum_, cnt_) in sorted(merged.items())
     ]
 
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='Benchmark using pure Python multiprocessing'
+        description="Benchmark using pure Python multiprocessing"
     )
+    parser.add_argument("data_file", type=Path, help="Path to stations.txt")
     parser.add_argument(
-        'data_file',
-        type=Path,
-        help='Path to stations.txt'
-    )
-    parser.add_argument(
-        '--partitions',
+        "--partitions",
         type=int,
         default=DEFAULT_PARTITIONS,
-        help=f'Number of file partitions (default: {DEFAULT_PARTITIONS})'
+        help=f"Number of file partitions (default: {DEFAULT_PARTITIONS})",
     )
     parser.add_argument(
-        '--cores',
+        "--cores",
         type=int,
         default=DEFAULT_CORES,
-        help=f'Number of CPU cores to use (default: {DEFAULT_CORES})'
+        help=f"Number of CPU cores to use (default: {DEFAULT_CORES})",
     )
     return parser.parse_args()
 
@@ -158,15 +151,15 @@ def main() -> int:
     args = parse_args()
     try:
         if not args.data_file.is_file():
-            raise FileNotFoundError(f'No input file present at {args.data_file}')
+            raise FileNotFoundError(f"No input file present at {args.data_file}")
 
         results = test_python(args.data_file, args.partitions, args.cores)
-        print(*results, sep='\n')
+        print(*results, sep="\n")
         return 0
     except (ValueError, FileNotFoundError) as e:
         print(str(e))
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -3,13 +3,9 @@
 import functools
 import time
 from collections.abc import Callable
-from typing import ParamSpec, TypeVar
-
-P = ParamSpec("P")
-R = TypeVar("R")
 
 
-def timeit(func: Callable[P, R]) -> Callable[P, R]:
+def timeit[**P, R](func: Callable[P, R]) -> Callable[P, R]:
     """Decorator that measures and prints function execution time."""
 
     @functools.wraps(func)
