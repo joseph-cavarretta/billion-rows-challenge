@@ -147,6 +147,7 @@ dependencies = [
     { name = "pandas" },
     { name = "polars" },
     { name = "pyarrow" },
+    { name = "vortex-data" },
 ]
 
 [package.optional-dependencies]
@@ -169,6 +170,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.1.0" },
     { name = "polars", specifier = ">=0.20.0" },
     { name = "pyarrow", specifier = ">=15.0.0" },
+    { name = "vortex-data", specifier = ">=0.76.0" },
 ]
 provides-extras = ["dev"]
 
@@ -1546,6 +1548,21 @@ wheels = [
 ]
 
 [[package]]
+name = "protobuf"
+version = "6.33.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/66/70/e908e9c5e52ef7c3a6c7902c9dfbb34c7e29c25d2f81ade3856445fd5c94/protobuf-6.33.6.tar.gz", hash = "sha256:a6768d25248312c297558af96a9f9c929e8c4cee0659cb07e780731095f38135", size = 444531, upload-time = "2026-03-18T19:05:00.988Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fc/9f/2f509339e89cfa6f6a4c4ff50438db9ca488dec341f7e454adad60150b00/protobuf-6.33.6-cp310-abi3-win32.whl", hash = "sha256:7d29d9b65f8afef196f8334e80d6bc1d5d4adedb449971fefd3723824e6e77d3", size = 425739, upload-time = "2026-03-18T19:04:48.373Z" },
+    { url = "https://files.pythonhosted.org/packages/76/5d/683efcd4798e0030c1bab27374fd13a89f7c2515fb1f3123efdfaa5eab57/protobuf-6.33.6-cp310-abi3-win_amd64.whl", hash = "sha256:0cd27b587afca21b7cfa59a74dcbd48a50f0a6400cfb59391340ad729d91d326", size = 437089, upload-time = "2026-03-18T19:04:50.381Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/01/a3c3ed5cd186f39e7880f8303cc51385a198a81469d53d0fdecf1f64d929/protobuf-6.33.6-cp39-abi3-macosx_10_9_universal2.whl", hash = "sha256:9720e6961b251bde64edfdab7d500725a2af5280f3f4c87e57c0208376aa8c3a", size = 427737, upload-time = "2026-03-18T19:04:51.866Z" },
+    { url = "https://files.pythonhosted.org/packages/ee/90/b3c01fdec7d2f627b3a6884243ba328c1217ed2d978def5c12dc50d328a3/protobuf-6.33.6-cp39-abi3-manylinux2014_aarch64.whl", hash = "sha256:e2afbae9b8e1825e3529f88d514754e094278bb95eadc0e199751cdd9a2e82a2", size = 324610, upload-time = "2026-03-18T19:04:53.096Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/ca/25afc144934014700c52e05103c2421997482d561f3101ff352e1292fb81/protobuf-6.33.6-cp39-abi3-manylinux2014_s390x.whl", hash = "sha256:c96c37eec15086b79762ed265d59ab204dabc53056e3443e702d2681f4b39ce3", size = 339381, upload-time = "2026-03-18T19:04:54.616Z" },
+    { url = "https://files.pythonhosted.org/packages/16/92/d1e32e3e0d894fe00b15ce28ad4944ab692713f2e7f0a99787405e43533a/protobuf-6.33.6-cp39-abi3-manylinux2014_x86_64.whl", hash = "sha256:e9db7e292e0ab79dd108d7f1a94fe31601ce1ee3f7b79e0692043423020b0593", size = 323436, upload-time = "2026-03-18T19:04:55.768Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/72/02445137af02769918a93807b2b7890047c32bfb9f90371cbc12688819eb/protobuf-6.33.6-py3-none-any.whl", hash = "sha256:77179e006c476e69bf8e8ce866640091ec42e1beb80b213c3900006ecfba6901", size = 170656, upload-time = "2026-03-18T19:04:59.826Z" },
+]
+
+[[package]]
 name = "psutil"
 version = "7.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2003,6 +2020,41 @@ wheels = [
 ]
 
 [[package]]
+name = "substrait"
+version = "0.28.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "protobuf" },
+    { name = "substrait-extensions" },
+    { name = "substrait-protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/83/8b/00266dfda600802a45569b28c0f412001e6dc1bb9c264b5aefa77860adc0/substrait-0.28.0.tar.gz", hash = "sha256:0d73925a7fefb0503637d3dad35e70e14e74b2a72fa624ab95514ed79a067cac", size = 115230, upload-time = "2026-03-13T19:20:21.282Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1a/b8/40c8ac43fe4099f056b84e4652f5e5a8e8c742b5d2850ea1c3dec7ee32b9/substrait-0.28.0-py3-none-any.whl", hash = "sha256:c36c5f424e901534b6150a7cc56fb75d237c6e85ce4c0e95102c16acc8f69414", size = 42028, upload-time = "2026-03-13T19:20:20.195Z" },
+]
+
+[[package]]
+name = "substrait-extensions"
+version = "0.79.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ba/80/d8c822bc2a70026beb80eff121c2dd1160befa2622e4f0a766506b71bba2/substrait_extensions-0.79.0.tar.gz", hash = "sha256:ae295944eb007d5d8243b4e9b818635ee054c6cab224b28e2d45746541b384f2", size = 48636, upload-time = "2026-03-13T17:12:49.411Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f3/2f/a05dd536db76ba9309bb80df559a203614d107ef2381560872fb12370396/substrait_extensions-0.79.0-py3-none-any.whl", hash = "sha256:4ca15d059b912e7e030b4c7a5f0a7c434206c7543f699e5f896caf9cb0b47b65", size = 101699, upload-time = "2026-03-13T17:12:48.505Z" },
+]
+
+[[package]]
+name = "substrait-protobuf"
+version = "0.79.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/8d/0d7ff0e56fdf341182729da4ce5754712ad3b950e0e404ec2fa53f46627b/substrait_protobuf-0.79.0.tar.gz", hash = "sha256:f1bf8641eb3ee785f4affd4f728568958deda2bb1ededa09f02f2118229616d4", size = 74840, upload-time = "2026-01-29T00:08:55.587Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0a/27/24e16471dc7b5986cd2af0d5aab9b12347fb835840fb2320b1b2375e53a8/substrait_protobuf-0.79.0-py3-none-any.whl", hash = "sha256:6f710459569be0b92661e16a2d180a9f2a03853c3ef0154a0c6c8a9aef365ffa", size = 83741, upload-time = "2026-01-29T00:08:54.03Z" },
+]
+
+[[package]]
 name = "terminado"
 version = "0.18.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2090,6 +2142,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c7/24/5f1b3bdffd70275f6661c76461e25f024d5a38a46f04aaca912426a2b1d3/urllib3-2.6.3.tar.gz", hash = "sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed", size = 435556, upload-time = "2026-01-07T16:24:43.925Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl", hash = "sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4", size = 131584, upload-time = "2026-01-07T16:24:42.685Z" },
+]
+
+[[package]]
+name = "vortex-data"
+version = "0.76.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyarrow" },
+    { name = "substrait" },
+    { name = "typing-extensions" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ae/c6/a90f06f1d929462ec6bc18eaad4e1fda5653025768b5bb70f10db6abdb50/vortex_data-0.76.0-cp311-abi3-macosx_10_12_x86_64.whl", hash = "sha256:08ecf6b4ae03dead98d7038185609d0c3eaf2ad53f4ddfc9cab27aa813095251", size = 40216147, upload-time = "2026-07-01T15:33:03.398Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/63/757bdb0adc44209113dfd185e2b4453b9f84c7dd3a3ee0468dc03456a4d0/vortex_data-0.76.0-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:f3f145e89f4d2d14f4416dea639550e1f1e12e4798e6a689d1d7fad8e13387ac", size = 38523461, upload-time = "2026-07-01T15:33:08.282Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/76/83697ee6bf9d1a340fca37c300f4ac7d67aaa0e6764e710f32c3936cf45f/vortex_data-0.76.0-cp311-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:545e9f87f9561661a2c9fb97465e672ce640af2d2525e933262d04b38fbec449", size = 35706064, upload-time = "2026-07-01T15:33:12.803Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/94/8256c678cd614982bb62c98556c7c749682825774a3560a8ec3ae59b82a3/vortex_data-0.76.0-cp311-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ac2a01008a085365bc905e558273a3ec94d3b206e06260b42a4f589bf0005ce0", size = 37541842, upload-time = "2026-07-01T15:33:17.454Z" },
 ]
 
 [[package]]
