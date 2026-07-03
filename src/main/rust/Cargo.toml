@@ -1,0 +1,21 @@
+[package]
+name = "vortex-bench"
+version = "0.1.0"
+edition = "2021"
+
+# Pin these to current releases before building — the Vortex crates are young
+# and move fast. Easiest: `cargo add vortex vortex-datafusion datafusion tokio`
+# and let cargo fill in the latest versions, then check docs.rs for API changes.
+[dependencies]
+vortex = "*"             # CHANGE_ME: pin to current version (see crates.io)
+vortex-datafusion = "*"  # CHANGE_ME: DataFusion TableProvider for Vortex
+datafusion = "*"         # CHANGE_ME
+tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "vortex-bench"
+path = "src/main.rs"
+
+[profile.release]
+lto = true
+codegen-units = 1

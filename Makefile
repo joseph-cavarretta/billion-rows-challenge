@@ -1,4 +1,4 @@
-.PHONY: install lint format check
+.PHONY: install lint format check create_data pandas polars python sqlite duckdb awk convert duckdb-vortex polars-vortex rust-vortex
 
 install:
 	uv sync
@@ -14,6 +14,7 @@ check:
 	uv run ruff format --check .
 
 DATA = src/data/stations.txt
+VORTEX = src/data/measurements.vortex
 ONE_BILLION = 1000000000
 TIME = /usr/bin/time -p
 
@@ -21,6 +22,14 @@ define REQUIRE_DATA
 	@if [ ! -f "$(DATA)" ]; then \
 	  echo "ERROR: data file '$(DATA)' not found" >&2; \
 	  echo "Hint: run 'make create_data' first."; \
+	  exit 1; \
+	fi
+endef
+
+define REQUIRE_VORTEX
+	@if [ ! -f "$(VORTEX)" ]; then \
+	  echo "ERROR: vortex file '$(VORTEX)' not found" >&2; \
+	  echo "Hint: run 'make convert' first."; \
 	  exit 1; \
 	fi
 endef
@@ -53,3 +62,22 @@ duckdb:
 awk:
 	$(REQUIRE_DATA)
 	@$(TIME) ./src/main/bash/test_awk.sh "$(DATA)"
+
+# --- Part 2: columnar formats (Parquet + Vortex) ---
+
+# one-time: convert the CSV into measurements.parquet and measurements.vortex
+convert:
+	$(REQUIRE_DATA)
+	@$(TIME) uv run python src/scripts/convert_data.py "$(DATA)"
+
+duckdb-vortex:
+	$(REQUIRE_VORTEX)
+	@$(TIME) uv run python src/main/python/duckdb_vortex.py "$(VORTEX)"
+
+polars-vortex:
+	$(REQUIRE_VORTEX)
+	@$(TIME) uv run python src/main/python/polars_vortex.py "$(VORTEX)"
+
+rust-vortex:
+	$(REQUIRE_VORTEX)
+	@$(TIME) cargo run --release --manifest-path src/main/rust/Cargo.toml -- "$(VORTEX)"
