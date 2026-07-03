@@ -1,3 +1,18 @@
+.PHONY: install lint format check
+
+install:
+	uv sync
+
+lint:
+	uv run ruff check .
+
+format:
+	uv run ruff format .
+
+check:
+	uv run ruff check .
+	uv run ruff format --check .
+
 DATA = src/data/stations.txt
 ONE_BILLION = 1000000000
 TIME = /usr/bin/time -p
@@ -11,29 +26,29 @@ define REQUIRE_DATA
 endef
 
 create_data:
-	@$(TIME) python3 src/scripts/create_data.py "$(ONE_BILLION)"
+	@$(TIME) uv run python src/scripts/create_data.py "$(ONE_BILLION)"
 
 pandas:
 	$(REQUIRE_DATA)
-	@$(TIME) python3 src/main/python/test_pandas.py "$(DATA)"
+	@$(TIME) uv run python src/main/python/test_pandas.py "$(DATA)"
 
 polars:
 	$(REQUIRE_DATA)
-	@$(TIME) python3 src/main/python/test_polars.py "$(DATA)"
+	@$(TIME) uv run python src/main/python/test_polars.py "$(DATA)"
 
 python:
 	$(REQUIRE_DATA)
-	@$(TIME) python3 src/main/python/test_python.py "$(DATA)"
+	@$(TIME) uv run python src/main/python/test_python.py "$(DATA)"
 
 sqlite:
 	$(REQUIRE_DATA)
-	@python3 src/main/python/test_sqlite.py load "$(DATA)"
-	@$(TIME) python3 src/main/python/test_sqlite.py query
-	@python3 src/main/python/test_sqlite.py cleanup
+	@uv run python src/main/python/test_sqlite.py load "$(DATA)"
+	@$(TIME) uv run python src/main/python/test_sqlite.py query
+	@uv run python src/main/python/test_sqlite.py cleanup
 
 duckdb:
 	$(REQUIRE_DATA)
-	@$(TIME) python3 src/main/python/test_duckdb.py "$(DATA)"
+	@$(TIME) uv run python src/main/python/test_duckdb.py "$(DATA)"
 
 awk:
 	$(REQUIRE_DATA)
