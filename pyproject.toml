@@ -12,14 +12,14 @@ dependencies = [
     "numpy>=2.5.1",
     "pandas>=3.0.3",
     "polars>=1.42.1",
-    "pyarrow>=24.0.0",
-    "vortex-data>=0.76.0",
+    "pyarrow>=25.0.0",
+    "vortex-data>=0.79.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "jupyter>=1.0.0",
-    "matplotlib>=3.11.0",
+    "matplotlib>=3.11.1",
 ]
 
 [build-system]
@@ -55,5 +55,5 @@ known-first-party = ["src"]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.20",
+    "ruff>=0.15.22",
 ]
