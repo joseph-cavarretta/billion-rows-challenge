@@ -8,6 +8,10 @@ DEFAULT_CORES = 12
 # per-partition buffer size
 CHUNK_SIZE = 8 * 1024 * 1024
 
+# station -> [min, max, sum, count], readings in integer thousandths. The parse loop
+# below is inlined twice on purpose: a function call per row is measurable here.
+type _Stats = dict[bytes, list[int]]
+
 
 def create_ranges(data_path: Path, partitions: int) -> list[tuple[int, int]]:
     """Create byte ranges for file partitioning."""
@@ -23,11 +27,9 @@ def create_ranges(data_path: Path, partitions: int) -> list[tuple[int, int]]:
     return ranges
 
 
-def process_file_partition(
-    data_path: Path, start: int, end: int
-) -> dict[str, list[float | int]]:
+def process_file_partition(data_path: Path, start: int, end: int) -> _Stats:
     """Process a partition of the file and return aggregated station data."""
-    records: dict[str, list[float | int]] = {}
+    records: _Stats = {}
 
     with data_path.open("rb") as f:
         f.seek(start)
@@ -54,8 +56,8 @@ def process_file_partition(
                 if not line:
                     continue
 
-                station, measure = line.split(b";", 1)
-                measure = int(float(measure) * 1000)
+                station, raw = line.split(b";", 1)
+                measure = int(float(raw) * 1000)
 
                 s = records.get(station)
 
@@ -68,8 +70,8 @@ def process_file_partition(
                     s[3] = s[3] + 1
 
         if leftover:
-            station, measure = leftover.split(b";", 1)
-            measure = int(float(measure) * 1000)
+            station, raw = leftover.split(b";", 1)
+            measure = int(float(raw) * 1000)
 
             s = records.get(station)
 
@@ -86,14 +88,14 @@ def process_file_partition(
 
 def _process_partition_wrapper(
     args: tuple[Path, int, int],
-) -> dict[str, list[float | int]]:
+) -> _Stats:
     """Wrapper for multiprocessing starmap compatibility."""
     return process_file_partition(*args)
 
 
 def test_python(
     data_path: Path, partitions: int, cores: int
-) -> list[tuple[str, float, float, float]]:
+) -> list[tuple[bytes, float, float, float]]:
     """Run the Python multiprocessing benchmark."""
     ranges = create_ranges(data_path, partitions)
     partition_args = [(data_path, start, end) for start, end in ranges]

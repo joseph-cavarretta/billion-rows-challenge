@@ -20,7 +20,7 @@ def test_duckdb(data_path: Path) -> None:
         )
         GROUP BY station
         ORDER BY station
-    """
+    """  # noqa: S608  # the path is this CLI's own argument, SCHEMA a constant
     conn = db.connect()
     results = conn.execute(query).fetchall()
     print(*results, sep="\n")

@@ -15,16 +15,14 @@ import duckdb as db
 
 
 def test_duckdb_vortex(data_path: Path) -> None:
-    """Aggregate min/mean/max reading per station from a Vortex file.
-
-    TODO(you): implement this.
-      1. conn = db.connect()
-      2. load the extension:  conn.execute("INSTALL vortex; LOAD vortex;")
-      3. run a GROUP BY station aggregation over read_vortex('<data_path>')
-         selecting station, AVG(reading), MIN(reading), MAX(reading), sorted
-         by station (mirror the SQL in test_duckdb.py)
-      4. fetch and print the rows, e.g. print(*rows, sep="\\n")
-    """
+    """Aggregate min/mean/max reading per station from a Vortex file."""
+    # Still to implement:
+    #   1. conn = db.connect()
+    #   2. load the extension:  conn.execute("INSTALL vortex; LOAD vortex;")
+    #   3. run a GROUP BY station aggregation over read_vortex('<data_path>')
+    #      selecting station, AVG(reading), MIN(reading), MAX(reading), sorted
+    #      by station (mirror the SQL in test_duckdb.py)
+    #   4. fetch and print the rows, e.g. print(*rows, sep="\n")
     raise NotImplementedError("Implement the DuckDB + Vortex benchmark")
 
 
