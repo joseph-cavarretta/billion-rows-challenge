@@ -15,19 +15,16 @@ import polars as pl  # noqa: F401  # used once you implement test_polars_vortex
 
 
 def test_polars_vortex(path: Path) -> None:
-    """Aggregate min/mean/max reading per station from a Vortex file.
-
-    TODO(you): implement this.
-      1. read the Vortex file with the `vortex` python package (vortex-data)
-         and convert to an Arrow table / RecordBatchReader
-         (see https://docs.vortex.dev/ for the current read API)
-      2. wrap it with polars, e.g. pl.from_arrow(...)
-      3. run the same group_by("station").agg(mean/max/min) + sort as
-         test_polars.py, then print the frame
-
-    Stretch goal: push the aggregation down instead of materializing the whole
-    table in memory — Vortex can filter/scan compressed segments directly.
-    """
+    """Aggregate min/mean/max reading per station from a Vortex file."""
+    # Still to implement:
+    #   1. read the Vortex file with the `vortex` python package (vortex-data)
+    #      and convert to an Arrow table / RecordBatchReader
+    #      (see https://docs.vortex.dev/ for the current read API)
+    #   2. wrap it with polars, e.g. pl.from_arrow(...)
+    #   3. run the same group_by("station").agg(mean/max/min) + sort as
+    #      test_polars.py, then print the frame
+    # Stretch goal: push the aggregation down instead of materializing the whole
+    # table in memory — Vortex can filter/scan compressed segments directly.
     raise NotImplementedError("Implement the Polars + Vortex benchmark")
 
 

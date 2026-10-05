@@ -34,8 +34,9 @@ def create_table(conn: sql.Connection) -> None:
 
 def load_db(data_path: Path) -> None:
     """Load data from CSV into the database."""
-    subprocess.run(
-        [
+    # The sqlite3 CLI's .import is the fastest bulk load; arguments are local paths.
+    subprocess.run(  # noqa: S603
+        [  # noqa: S607
             "sqlite3",
             str(DB_PATH),
             "-cmd",
@@ -55,7 +56,7 @@ def test_sqlite(conn: sql.Connection) -> None:
         FROM {TABLE}
         GROUP BY station
         ORDER BY station
-    """
+    """  # noqa: S608  # TABLE is a module constant
     cursor = conn.cursor()
     rows = cursor.execute(query)
     results = rows.fetchall()
