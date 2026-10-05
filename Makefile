@@ -12,6 +12,8 @@ format:
 check:
 	uv run ruff check .
 	uv run ruff format --check .
+	uv run python ../agent-dev-harness/python-styleguide/docstring_length.py .
+	uv run mypy .
 
 DATA = src/data/stations.txt
 VORTEX = src/data/measurements.vortex
