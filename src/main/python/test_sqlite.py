@@ -39,9 +39,11 @@ def load_db(data_path: Path) -> None:
         [  # noqa: S607
             "sqlite3",
             str(DB_PATH),
-            "-cmd",
-            ".mode csv",
-            ".separator ;",
+            # As separate arguments, ".mode csv" and ".separator ;" were split at
+            # the ";" and rejected; the CLI options set the same import format.
+            "-csv",
+            "-separator",
+            ";",
             ".import " + str(data_path) + " " + TABLE,
         ],
         capture_output=True,
