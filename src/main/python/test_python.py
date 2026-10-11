@@ -32,10 +32,11 @@ def process_file_partition(data_path: Path, start: int, end: int) -> _Stats:
     records: _Stats = {}
 
     with data_path.open("rb") as f:
-        f.seek(start)
-
+        # A partition owns every line that starts inside [start, end). Seeking one
+        # byte back before skipping keeps a line that starts exactly at `start`; the
+        # rest of a line cut by `start` belongs to the previous partition.
         if start > 0:
-            # read and discard first line
+            f.seek(start - 1)
             f.readline()
 
         remaining = end - f.tell()
@@ -69,7 +70,9 @@ def process_file_partition(data_path: Path, start: int, end: int) -> _Stats:
                     s[2] = s[2] + measure
                     s[3] = s[3] + 1
 
-        if leftover:
+        # The last line started before `end`, so finish reading it past the boundary.
+        leftover += f.readline() if leftover else b""
+        if leftover.strip():
             station, raw = leftover.split(b";", 1)
             measure = int(float(raw) * 1000)
 
